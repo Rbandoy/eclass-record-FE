@@ -8,8 +8,15 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "axios": "^1.7.7",
     "core-js": "^3.8.3",
-    "vue": "^3.2.13"
+    "file-saver": "^2.0.5",
+    "postcss": "^8.4.42",
+    "tailwindcss": "^3.4.10",
+    "vue": "^3.2.13",
+    "vue-router": "^4.4.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
