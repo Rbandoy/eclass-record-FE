@@ -1,7 +1,7 @@
 <template>
-  <div class="max-w-7xl mx-auto p-6">
+  <div class="container mx-auto p-6">
     <div class="flex flex-row justify-between">
-      <h1 class="text-2xl font-bold mb-4">Manage Programs</h1>
+      <h1 class="text-3xl font-bold">Manage Programs</h1>
 
       <!-- Button to open the Create Program Modal -->
       <button @click="openCreateModal" class="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">Create Program</button>

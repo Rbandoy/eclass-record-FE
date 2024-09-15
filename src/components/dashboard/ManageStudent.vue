@@ -23,16 +23,16 @@
       <table class="min-w-full bg-white border border-gray-200 rounded-lg">
         <thead>
           <tr class="border-b">
-            <th class="p-4 text-left">Student ID</th>
-            <th class="p-4 text-left">Last Name</th>
-            <th class="p-4 text-left">First Name</th>
-            <th class="p-4 text-left">Middle Name</th>
-            <th class="p-4 text-left">Email</th>
-            <th class="p-4 text-left">Mobile</th>
-            <th class="p-4 text-left">Status</th>
-            <th class="p-4 text-left">Address</th>
-            <th class="p-4 text-left">Gender</th>
-            <th class="p-4 text-left">Actions</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Student ID</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Last Name</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">First Name</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Middle Name</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Email</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Mobile</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Address</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Gender</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>

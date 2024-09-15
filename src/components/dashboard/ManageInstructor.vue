@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto p-6">
+  <div class="container mx-auto p-6">
     <div class="flex flex-row justify-between">
       <h1 class="text-3xl font-bold mb-6">Users Account</h1>
       <button 

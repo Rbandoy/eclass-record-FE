@@ -78,17 +78,24 @@
         </ul>
       </div>
     </aside>
-
-    <!-- Main content -->
-    <main class="flex-1 flex flex-col">
-      <bread-crumb />
-      <div class="flex-1 flex justify-center p-6 overflow-x-auto"> <!-- Added overflow-x-auto -->
-  
-        <div class="w-full h-100%">
-          <router-view></router-view> <!-- This is where nested routes will be rendered -->
+    <div class="flex flex-col w-full">
+      <nav class="w-full flex">
+        <div class="flex flex-row-reverse items-center w-full justify-between bg-gray-800 text-white p-4">
+          <h1 class="self-end">Hello {{ profileName }}</h1>
         </div>
-      </div>
-    </main>
+      </nav>
+      <!-- Main content -->
+      <main class="flex-1 flex flex-col">
+        <bread-crumb />
+        <div class="flex-1 flex justify-center p-6 overflow-x-auto"> <!-- Added overflow-x-auto -->
+    
+          <div class="w-full h-100%">
+            <router-view></router-view> <!-- This is where nested routes will be rendered -->
+          </div>
+        </div>
+      </main>
+    </div>
+    
 
     <!-- Modal -->
     <div v-if="showLogoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -104,7 +111,7 @@
 </template>
 
 <script>
-import BreadCrumb from './reuseable/BreadCrumb.vue';
+import BreadCrumb from './reuseable/BreadCrumb.vue'; 
 export default {
   components: { BreadCrumb },
   name: 'DashBoard',
@@ -112,7 +119,8 @@ export default {
     return {
       role: '',
       showSidebar: true,
-      showLogoutModal: false
+      showLogoutModal: false,
+      c: ''
     };
   },
   methods: {
@@ -131,6 +139,12 @@ export default {
     mounted() {
       this.role = sessionStorage.getItem("role"); 
     }
+  },
+  mounted() {
+    var _this = this;
+    let profile = JSON.parse(sessionStorage.getItem('profile'));
+    _this.profileName = profile.fname;
+    console.log(this.profileName)
   }
 }
 </script>
