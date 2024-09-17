@@ -4,7 +4,7 @@
       <h1 class="text-3xl font-bold">Manage Programs</h1>
 
       <!-- Button to open the Create Program Modal -->
-      <button @click="openCreateModal" class="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">Create Program</button>
+      <button @click="openCreateModal" class="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">Add Program</button>
     </div>
 
     <!-- Program List --> 

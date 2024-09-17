@@ -4,7 +4,7 @@
     <div class="mb-6 flex flex-row justify-between">
       <h1 class="text-3xl font-bold">Manage Students</h1>
       <button @click="openCreateModal" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md">
-        Add New Student
+        Add Student
       </button>
     </div>
 
@@ -64,8 +64,8 @@
 
     <!-- Add/Edit Student Modal -->
     <transition name="fade">
-      <div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+      <div v-if="isModalOpen" class="fixed inset-0 flex items-center p-2 justify-center bg-gray-800 bg-opacity-50 overflow-auto">
+        <div class="bg-white p-6 mt-10 rounded-lg shadow-lg max-w-md h-auto w-full">
           <h2 class="text-2xl font-semibold mb-4">{{ isEditing ? 'Edit Student' : 'Add New Student' }}</h2>
           <form @submit.prevent="isEditing ? updateStudent() : createStudent()">
             <!-- Form Fields -->

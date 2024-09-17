@@ -101,27 +101,74 @@
 
     <!-- view student grades modal -->
     <transition name="fade">
-      <div v-if="isAddStudentModalOpen" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-          <h2 class="text-2xl font-semibold mb-4">Student Grades</h2>
-          <form @submit.prevent="addStudentToProgram">
-            <div class="mb-4">
-              <label for="studentId" class="block text-sm font-medium text-gray-700">Student ID:</label>
-              <input
-                type="text"
-                id="studentId"
-                v-model="newStudentId"
-                class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                required
-              />
+      <div v-if="isViewGradesModalOpen" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-[80%] w-full">
+          
+          <div class="flex flex-row justify-center items-start gap-3">
+            <div class="w-full">
+              <h2 class="text-2xl font-semibold mb-4">Quizzes</h2>
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+              <thead>
+                <tr class="border-b">
+                  <th class="p-4 text-left">Title</th>
+                  <th class="p-4 text-left">Items</th>
+                  <th class="p-4 text-left">Quarter</th> 
+                  <th class="p-4 text-left">Score</th> 
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="quiz in viewGradesDetails.quizzes" :key="quiz.id" class="border-b  hover:bg-gray-100">
+                  <td class="p-4">{{ quiz.attributes.quizTitle }}</td>
+                  <td class="p-4">{{ quiz.attributes.items }}</td>
+                  <td class="p-4">{{ quarters[quiz.attributes.quarter] }}</td>
+                  <td class="p-4">{{ quiz.attributes.score }}</td>
+                  <td class="p-4 flex space-x-2">
+                    <button 
+                      @click="quiz.attributes.score > 0 ? updateGradeModal(quiz): addGradeModal(quiz)" 
+                      class="bg-blue-500 text-white px-3 py-1 rounded-md">
+                      {{ quiz.attributes.score > 0 ? 'Update' : 'Add Score' }}
+                    </button>
+                  </td>
+                  
+                </tr>
+              </tbody>
+            </table>
             </div>
+            
+            <div class="w-full">
+              <h2 class="text-2xl font-semibold mb-4">Exams</h2>
+              <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                
+                <thead>
+                  <tr class="border-b">
+                    <th class="p-4 text-left">Quarter</th> 
+                    <th class="p-4 text-left">Items</th>
+                    <th class="p-4 text-left">Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="exam in viewGradesDetails.exams.data" :key="exam.id" class="border-b hover:bg-gray-400">
+                    <td class="p-4">{{ quarters[exam.attributes.quarter] }}</td>
+                    <td class="p-4">{{ exam.attributes.items }}</td> 
+                    <td class="p-4">{{ exam.attributes.score }}</td> 
+                    <td class="p-4 flex space-x-2">
+                      <button @click="openViewGradesModal(exam)" class="bg-blue-500 text-white px-3 py-1 rounded-md">
+                        Add Grade
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+        </div>
+          <form @submit.prevent="addStudentToProgram">
             <div class="flex justify-end">
               <button @click="closeModal" type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md mr-2">
                 Cancel
               </button>
               <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">
                 Add
-              </button>
+              </button> 
             </div>
           </form>
         </div>
@@ -176,6 +223,35 @@
       </div>
     </transition>
 
+    <!-- Add Score Modal -->
+    <transition name="fade">
+      <div v-if="isAddScoreModalOpen" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+          <h2 class="text-2xl font-semibold mb-4">{{  updateScore == false ? "Add" : "Update"  }} Score</h2>
+          <form @submit.prevent="addScore">
+            <div class="mb-4">
+              <label for="addScore" class="block text-sm font-medium text-gray-700">Score:</label>
+              <input
+                type="text"
+                id="addScore"
+                v-model="addScoreParams.score"
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md" 
+                required
+              />
+            </div>
+            <div class="flex justify-end">
+              <button @click="closeModal" type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md mr-2">
+                Cancel
+              </button>
+              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">
+                {{  updateScore == false ? "Add" : "Update"  }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </transition>
+
     <!-- Add Exam Modal -->
     <transition name="fade">
       <div v-if="isAddExamModalOpen" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
@@ -219,15 +295,38 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
+const quarters = {
+  1: 'Prelim',
+  2: 'Midterm',
+  3: 'Pre-Finals',
+  4: 'Finals'
+};
+
+const addScoreParams = ref({
+  student_id: "",
+  score: "",
+  type: "",
+  quarter: "",
+  program_code: "",
+  instructor_id: '',
+  quiz: ''
+})
+
+const isAddScoreModalOpen = ref(false)
 const isAddQuizModalOpen = ref(false)
 const isAddExamModalOpen = ref(false)
+const isViewGradesModalOpen = ref(false)
 const programCode = ref(''); 
 const students = ref([]);
 const programExists = ref(false);
 const isAddStudentModalOpen = ref(false);
 const newStudentId = ref('');
+const currentStudentId = ref('');
 const currentProgramId = ref(null);
 const currentProgramDetails = ref('');
+const selectedStudent = ref(null)
+const updateScore = ref(false) 
+
 const addQuizParams = ref({
   quizTitle: '',
   items: 0,
@@ -245,9 +344,96 @@ const viewGradesDetails = ref({
   exams: ""
 })
 
+const addGradeModal = async (data) => {
+  console.log("add grades",data)
+  isAddScoreModalOpen.value = true
+  console.log(data)
+  addScoreParams.value = {
+    student_id: currentStudentId,
+    score: '',
+    type: 'quiz',
+    quarter: data.attributes.quarter,
+    program_code: programCode.value,
+    instructor_id: data.attributes.instructor_id,
+    enrolled_student: currentStudentId,
+    quiz: data.id
+  }
+
+  console.log(addScoreParams.value)
+}
+
+const updateGradeModal = async (data) => {
+  console.log("add grades",data)
+  isAddScoreModalOpen.value = true
+  console.log(data)
+  updateScore.value = true
+  addScoreParams.value = {
+    student_id: currentStudentId,
+    score: '',
+    type: 'quiz',
+    quarter: data.attributes.quarter,
+    program_code: programCode.value,
+    instructor_id: data.attributes.instructor_id,
+    enrolled_student: currentStudentId,
+    quiz: data.id
+  }
+
+  console.log(addScoreParams.value)
+}
+
+const addScore = async() => {
+  console.log("addScore")
+  const token = sessionStorage.getItem('jwt');
+    console.log("program id",currentProgramId.value)
+    console.log(viewGradesDetails.value.quizzes)
+    if (updateScore.value == true) {
+      let scoreId = ""
+      viewGradesDetails.value.quizzes.forEach(item => {
+        if (item.id == addScoreParams.value.quiz) {
+          scoreId = item.attributes.scoreId
+        }
+      })
+      console.log("quizScore", scoreId)
+      await axios.put(`http://localhost:1337/api/grades/${scoreId}`, {
+      data: {
+        ...addScoreParams.value,
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    } else {
+      await axios.post(`http://localhost:1337/api/grades/`, {
+      data: {
+        ...addScoreParams.value, 
+        program_code: programCode.value,
+        programs: currentProgramId.value
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    }
+
+    
+
+
+    isAddScoreModalOpen.value = false
+    fetchStudentGrades()
+    searchProgram()
+}
 const openViewGradesModal = async (data) => {
   console.log(data)
+  selectedStudent.value = data
+  fetchStudentGrades() 
+  isViewGradesModalOpen.value = true 
+  console.log("grades", viewGradesDetails.value)
+}
 
+const fetchStudentGrades = async () => {
+  const data = selectedStudent.value
   const token = sessionStorage.getItem('jwt');
   const profileId = JSON.parse(sessionStorage.getItem('profile')).id;
   const response = await axios.get(`http://localhost:1337/api/quizzes?filters[program_code][$eq]=${programCode.value}&filters[instructor_id][$eq]=${profileId}&populate=*`, {
@@ -256,13 +442,46 @@ const openViewGradesModal = async (data) => {
     }
   });
 
+  const response2 = await axios.get(`http://localhost:1337/api/exams?filters[program_code][$eq]=${programCode.value}&filters[instructor_id][$eq]=${profileId}&populate=*`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  console.log("quizes results", response.data)
+  console.log("quizzes results", response.data);
+  try {
+  // Create an array of promises for each quiz
+  const quizzesWithScore = response.data.data.map(async quiz => {
+    // Fetch the score for each quiz
+    const res = await axios.get(`http://localhost:1337/api/grades?filters[student_id][$eq]=${data.id.toString()}&filters[instructor_id][$eq]=${profileId}&filters[quiz]=${quiz.id}&populate=*`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    console.log(res.data.data)
+    // Update the quiz attributes with the fetched score
+    quiz.attributes = { ...quiz.attributes, score: res.data.data[0]?.attributes.score, scoreId: res.data.data[0]?.id };
+    
+    // Return the updated quiz (optional, if you need the updated quizzes array)
+    return quiz;
+  });
+
+  // Wait for all promises to be resolved
+  const resultQuiz = await Promise.all(quizzesWithScore);
+  
+  // Log the results after all promises have been resolved
+  console.log("quizzes with score", resultQuiz);
+  currentStudentId.value = data.id.toString()
   console.log("quizes", response)
   viewGradesDetails.value = {
-    quizzes: data?.attributes?.quiz,
-    exams: data?.attributes?.exams
+    quizzes: resultQuiz,
+    exams: response2.data
   }
 
-  console.log("grades", viewGradesDetails.value)
+} catch (error) {
+  // Handle any errors that occurred during the fetching or processing
+  console.error("Error fetching quiz scores", error);
+}
 }
 
 // Search for program code
@@ -369,6 +588,8 @@ const closeModal = () => {
   isAddStudentModalOpen.value = false;
   isAddQuizModalOpen.value = false;
   isAddExamModalOpen.value = false;
+  isViewGradesModalOpen.value = false;
+  isAddScoreModalOpen.value = false
 };
 const addQuizToProgram = async () => {
   console.log(addQuizParams.value)
@@ -402,6 +623,7 @@ const addExamToProgram = async () => {
         ...addExamParams.value,
         instructor_id: JSON.parse(sessionStorage.getItem('profile')).id.toString(),
         program_code: programCode.value,
+        programs: currentProgramId.value.toString()
       }
     }, {
       headers: {

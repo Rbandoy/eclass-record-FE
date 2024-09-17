@@ -77,24 +77,21 @@
           </li>
         </ul>
       </div>
-    </aside>
-    <div class="flex flex-col w-full">
-      <nav class="w-full flex">
+    </aside> 
+      <!-- <nav class="w-full flex">
         <div class="flex flex-row-reverse items-center w-full justify-between bg-gray-800 text-white p-4">
           <h1 class="self-end">Hello {{ profileName }}</h1>
         </div>
       </nav>
-      <!-- Main content -->
+      Main content -->
       <main class="flex-1 flex flex-col">
         <bread-crumb />
-        <div class="flex-1 flex justify-center p-6 overflow-x-auto"> <!-- Added overflow-x-auto -->
-    
+        <div class="flex-1 flex justify-center p-6 overflow-x-auto"> <!-- Added overflow-x-auto --> 
           <div class="w-full h-100%">
             <router-view></router-view> <!-- This is where nested routes will be rendered -->
           </div>
         </div>
-      </main>
-    </div>
+      </main> 
     
 
     <!-- Modal -->
