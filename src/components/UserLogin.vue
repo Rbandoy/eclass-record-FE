@@ -2,33 +2,40 @@
   <div class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
       <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
-      <form @submit.prevent="UserLogin">
-        <div class="mb-4">
+      <form v-if="!grades" @submit.prevent="UserLogin">
+        <div class="mb-6">
+          <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
           <input 
             v-model="username" 
             id="username" 
-            label="Username" 
             placeholder="Enter your username"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </div>
+
         <div class="mb-6">
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
           <input 
             v-model="password" 
             id="password" 
             type="password" 
-            label="Password" 
             placeholder="Enter your password"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </div>
+
         <Button 
           type="submit" 
-          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          class="w-full bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150"
           :disabled="isSubmitting"
         >
-          Login
+          <span v-if="isSubmitting">Logging in...</span>
+          <span v-else>Login</span>
         </Button>
+
+        <router-link to="/register" class="block text-center text-indigo-600 mt-4 hover:underline">Create an Account</router-link>
+
+        <router-link to="/view-grades" class="block text-center text-gray-600 mt-4 hover:underline">View Grades</router-link>
         <p v-if="errorMessage" class="mt-4 text-red-600 text-center">{{ errorMessage }}</p>
       </form>
     </div>
@@ -58,14 +65,12 @@ export default {
       console.log('Password:', this.password);  
 
       try {
-        const response = await axios.post('http://localhost:1337/api/auth/local/', {
+        const response = await axios.post('http://localhost:1337/api/auth/local', {
         identifier: this.username,
           password: this.password,
         });
 
         const { jwt, user } = response.data;
-
-     
        
         // Save JWT token to session storage
         sessionStorage.setItem('jwt', jwt);

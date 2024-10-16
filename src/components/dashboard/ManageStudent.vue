@@ -32,11 +32,14 @@
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Status</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Address</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Gender</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Activated</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="student in filteredStudents" :key="student.id" class="border-b">
+          <tr
+          :class="{'bg-red-100': !student.attributes.activated}"
+          v-for="student in filteredStudents" :key="student.id" class="border-b">
             <td class="p-4">{{ student.attributes.student_id }}</td>
             <td class="p-4">{{ student.attributes.lname }}</td>
             <td class="p-4">{{ student.attributes.fname }}</td>
@@ -46,6 +49,7 @@
             <td class="p-4">{{ student.attributes.status }}</td>
             <td class="p-4">{{ student.attributes.address }}</td>
             <td class="p-4">{{ student.attributes.gender }}</td>
+            <td class="p-4">{{ student.attributes.activated }}</td>
             <td class="p-4 flex space-x-2">
               <button @click="openEditModal(student)" class="bg-blue-500 text-white px-3 py-1 rounded-md">
                 Edit
@@ -72,6 +76,14 @@
             <div class="mb-4">
               <label for="student_id" class="block text-sm font-medium text-gray-700">Student ID:</label>
               <input type="text" id="student_id" v-model="studentForm.student_id" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" :disabled="isEdit"/>
+            </div>
+            <div class="mb-4">
+              <label for="fname" class="block text-sm font-medium text-gray-700">User Name:</label>
+              <input type="text" id="username" v-model="studentForm.username" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
+            </div>
+            <div class="mb-4">
+              <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
+              <input type="text" id="password" v-model="studentForm.password" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
             </div>
             <div class="mb-4">
               <label for="fname" class="block text-sm font-medium text-gray-700">First Name:</label>
@@ -116,6 +128,13 @@
                 <option value="Irregular">Irregular</option> 
               </select>
             </div>
+            <div class="mb-4">
+              <label for="status" class="block text-sm font-medium text-gray-700">Activated:</label>
+              <select id="status" v-model="studentForm.activated" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                <option value="true">True</option>
+                <option value="false">False</option> 
+              </select>
+            </div>
             <!-- ... (same as before) ... -->
             <div class="flex justify-end">
               <button @click="closeModal" type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md mr-2">
@@ -149,7 +168,10 @@ const studentForm = ref({
   status: '',
   mobile: '',
   address: '',
-  gender: ''
+  gender: '',
+  activated: '',
+  username: '',
+  password: '',
 });
 const currentStudentId = ref(null);
 const searchQuery = ref('');
@@ -249,14 +271,27 @@ const closeModal = () => {
   isModalOpen.value = false;
 };
 
-// Filtered students based on search query
+// Filtered and sorted students based on search query and activated status
 const filteredStudents = computed(() => {
   const query = searchQuery.value.toLowerCase();
-  return students.value.filter(student => { 
-    console.log('asdasd', query , JSON.stringify())
-    return  JSON.stringify(student.attributes).includes(query)
+
+  // Create a new sorted array to avoid mutating the original array
+  const sortedStudents = [...students.value].sort((a, b) => {
+    if (a.attributes.activated === b.attributes.activated) {
+      return -1; // If both are activated or not, retain order
+    } else if (a.attributes.activated) {
+      return 1; // Move activated students up
+    } else {
+      return -1; // Move non-activated students down
+    }
   });
+
+  // Apply search query filtering after sorting
+  return sortedStudents.filter(student => 
+    JSON.stringify(student.attributes).toLowerCase().includes(query)
+  );
 });
+
 
 // Load students when the component is mounted
 onMounted(() => {

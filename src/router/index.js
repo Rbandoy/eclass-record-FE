@@ -10,10 +10,14 @@ import ManageInstructor from '@/components/dashboard/ManageInstructor.vue';
 import ManageProgram from '@/components/dashboard/ManageProgram.vue';
 import ManageEvaluation from '@/components/dashboard/ManageEvaluation.vue';
 import ManageStudent from '@/components/dashboard/ManageStudent.vue';
+import Registration from '@/components/RegistrationComponent.vue';
+import ViewGrades from '@/components/ViewGrades.vue';
 
 // Define your routes
 const routes = [
   { path: '/signin', name: 'signin', component: UserLogin },
+  { path: '/register', name: 'register', component: Registration },
+  { path: '/view-grades', name: 'view-grades', component: ViewGrades },
   {
     path: '/dashboard',
     name: 'dashboard',
@@ -44,11 +48,11 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isAuthenticated = sessionStorage.getItem('jwt');
 
-  if (to.name !== 'signin' && !isAuthenticated) {
+  if (to.name !== 'signin' && !isAuthenticated && to.name !== 'register' && to.name !== 'view-grades') {
     next({ name: 'signin' });
   } else if (to.name === 'signin' && isAuthenticated) {
     next({ name: '/dashboard' }); // Redirect to home if authenticated
-  } else {
+  } else { 
     next();
   }
 });

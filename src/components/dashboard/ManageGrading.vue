@@ -13,6 +13,7 @@
     </label>
     <button @click="exportToExcel" class="export-button">Export to Excel</button>
     <button @click="openRenameModal" class="save-button">Save Changes</button>
+    <button @click="submitToAdmin" class="save-button">Submit to admin</button>
 
     <div v-if="isRenameModalVisible" class="rename-modal">
       <div class="rename-content">
@@ -82,7 +83,7 @@ export default defineComponent({
     const loading = ref(false); // New loading state
     const isRenameModalVisible = ref(false);
     const newFileName = ref('');
-
+    const extension = ref(`@${JSON.parse(sessionStorage.getItem("profile")).id}`)
     const hotSettings = ref({
       colHeaders: true,
       rowHeaders: true,
@@ -131,7 +132,16 @@ export default defineComponent({
           url: 'http://localhost:1337/api/upload/files/'
         };
         const response = await axios.request(config);
-        files.value = response.data || [];
+        files.value = response.data.reduce((acc, cur) => {
+          console.log(cur?.name.includes(extension.value), extension.value);
+          if (cur?.name.includes(extension.value)) {
+            cur.name = cur.name.replace(extension.value, "")
+            console.log(cur.name)
+            acc.push(cur);
+          }
+          return acc; // You must return the accumulator
+        }, []) || [];
+
       } catch (error) {
         console.error('Error fetching files:', error);
       }
@@ -241,9 +251,8 @@ const saveToExcel = async () => {
 
   // Prepare FormData to send to the server
   const formData = new FormData();
-
-  console.log(selectedFile.value)
-  formData.append('files', blob, newFileName.value); // Change filename if needed
+ 
+  formData.append('files', blob, newFileName.value+""+extension.value); // Change filename if needed
 
   try {
     try {
@@ -251,6 +260,8 @@ const saveToExcel = async () => {
     } catch (error) {
       console.log("file not exists upload proceed")
     }
+
+    console.log(JSON.parse(sessionStorage.getItem("profile")).id)
     
     // Make an API request to Strapi to save the file
     const response = await fetch('http://localhost:1337/api/upload/', {
@@ -267,6 +278,123 @@ const saveToExcel = async () => {
   } finally { 
     const hotInstance = hotTableRef.value.hotInstance;
 
+    if (hotInstance) {
+      hotInstance.loadData([]);
+      hotInstance.updateSettings({ cells: hotSettings.value.cells });
+      loading.value = false; // Start loading
+    }
+    selectedFile.value = []
+    loading.value = false
+    isRenameModalVisible.value =false
+    fetchFiles()
+  }
+};
+
+const submitToAdmin = async () => {
+  console.log(data.value)
+  const students = data.value.reduce((acc, cur, index) => {
+    if (index > 11 && ["PASSED", "FAILED", "INC", "N/A"].includes(cur[7])) {
+      acc.push({
+        subject_no: data.value[8][2],
+        semester: data.value[8][6],
+        description: data.value[9][2],
+        "course": data.value[10][2],
+        instructor: data.value[10][6],
+        student_id: cur[0],
+        student_name: cur[1],
+        mtg: cur[2],
+        ftg: cur[3],
+        final: cur[4],
+        remarks: cur[7],
+        grade: cur[5]
+      })
+    }
+
+    return acc;
+  }, [])
+
+  students.forEach(async (data) => {
+  try {
+    const token = sessionStorage.getItem("jwt")
+    const response = await axios.post('http://localhost:1337/api/grade-masterlists', {data}, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(`Created entry: ${response.data}`);
+  } catch (error) {
+    console.error(`Failed to create entry: ${error}`);
+  }
+});
+ 
+  console.log(students)
+
+  console.log()
+  console.log(selectedFile.value.length)
+  console.log(selectedFile.value.name)
+  if (!selectedFile.value.name.includes("FRating")) {
+    alert("not final rating")
+    return
+  }
+  if (selectedFile.value.length == 0) return
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(data.value);
+  loading.value = true
+  // Get merged cells from the Handsontable instance
+  const mergeCells = hotTableRef.value.hotInstance.getSettings().mergeCells || [];
+  if (mergeCells.length > 0) {
+    ws['!merges'] = mergeCells.map(merge => ({
+      s: { r: merge.row, c: merge.col },
+      e: { r: merge.row + merge.rowspan - 1, c: merge.col + merge.colspan - 1 },
+    }));
+  }
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+  // Convert workbook to binary string
+  const excelData = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+  const blob = new Blob([s2ab(excelData)], { type: 'application/octet-stream' });
+
+  // Prepare FormData to send to the server
+  const formData = new FormData();
+ 
+  formData.append('files', blob, selectedFile.value.name+"@admin"); // Change filename if needed
+
+  const formData2 = new FormData();
+ 
+ formData2.append('files', blob, selectedFile.value.name+""+extension.value); // Change filename if needed
+ 
+  try {
+    try {
+      await axios.delete(`http://localhost:1337/api/upload/files/${selectedFile.value.id}`)
+    } catch (error) {
+      console.log("file not exists upload proceed")
+    }
+
+    console.log(JSON.parse(sessionStorage.getItem("profile")).id)
+    
+    // Make an API request to Strapi to save the file
+    const response = await fetch('http://localhost:1337/api/upload/', {
+      method: 'POST',
+      body: formData,
+      // Uncomment if you need to send authorization token
+      // headers: { 'Authorization': `Bearer ${token}` },
+    });
+
+    await fetch('http://localhost:1337/api/upload/', {
+      method: 'POST',
+      body: formData2,
+      // Uncomment if you need to send authorization token
+      // headers: { 'Authorization': `Bearer ${token}` },
+    });
+
+    const result = await response.json();
+    console.log('File updated on server:', result);
+  } catch (error) {
+    console.error('Error saving file:', error);
+  } finally { 
+    const hotInstance = hotTableRef.value.hotInstance;
     if (hotInstance) {
       hotInstance.loadData([]);
       hotInstance.updateSettings({ cells: hotSettings.value.cells });
@@ -387,6 +515,7 @@ const s2ab = (s) => {
       loadFile,
       zoomIn,
       zoomOut,
+      submitToAdmin
     };
   },
 });
