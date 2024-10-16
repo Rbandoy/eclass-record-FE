@@ -65,17 +65,35 @@ export default {
       console.log('Password:', this.password);  
 
       try {
-        const response = await axios.post('http://localhost:1337/api/auth/local', {
-        identifier: this.username,
+        const response = await axios.post('http://localhost:1337/api/auth/local?populate[user_permission]=*', {
+          identifier: this.username,
           password: this.password,
         });
 
-        const { jwt, user } = response.data;
-       
+
+        const { jwt } = response.data;
+
+        let config = {
+          method: 'get',
+          maxBodyLength: Infinity,
+          url: 'http://localhost:1337/api/users/me?populate=*',
+          headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${jwt}`
+          }
+        };
+
+        const user = await axios.request(config)
+
+        console.log(response)
+        if (user.data.activated == false || user.data.activated == null) {
+          alert("Users account not yet activated")
+          return
+        }
         // Save JWT token to session storage
         sessionStorage.setItem('jwt', jwt);
-        sessionStorage.setItem('role', user);
-        sessionStorage.setItem('profile', JSON.stringify(user));
+        sessionStorage.setItem('role', user.data.role.type);
+        sessionStorage.setItem('profile', JSON.stringify(user.data));
         // Redirect to another page or notify the user
         this.$router.push('/dashboard'); 
       } catch (error) {

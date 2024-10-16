@@ -128,6 +128,18 @@
       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
     />
   </div>
+  <div class="mb-4">
+    <label for="gender" class="block text-sm font-medium text-gray-700">Activate</label>
+    <select
+      v-model="newInstructor.activate"
+      id="activates"
+      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+      required
+    >
+      <option value="true">True</option>
+      <option value="false">False</option>
+    </select>
+  </div>
   <div class="flex justify-end mt-6 space-x-4">
     <button 
       type="submit" 
@@ -173,6 +185,9 @@
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
               Phone Number
             </th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+              Activated
+            </th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-sm font-medium text-gray-700 uppercase tracking-wider">
               Actions
             </th>
@@ -204,6 +219,9 @@
             </td>
             <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200">
               {{ instructor.phone_no }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200">
+              {{ instructor.activated }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-center">
               <button 

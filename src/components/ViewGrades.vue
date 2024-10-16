@@ -139,7 +139,7 @@ export default {
       this.isSubmitting = true;
 
       try {
-        const response = await axios.get(`http://localhost:1337/api/students?filters[username][$eq]=${this.username}&filters[password][$eq]=${this.password}`);
+        const response = await axios.get(`http://localhost:1337/api/students?filters[username][$eq]=${this.username}&filters[password][$eq]=${this.password}&filters[activated][$eq]=true`);
         
         const data = response.data.data[0];
        
@@ -155,54 +155,57 @@ export default {
   try {
     const printSection = this.$refs.printSection;
     const printWindow = window.open('', '', 'height=600,width=800');
+
     printWindow.document.write('<html><head><title>Print Grades Report</title>');
-    
-    // Include the styles you want to preserve during printing
+    // Add styles to the print window
     printWindow.document.write('<style>');
-    printWindow.document.write(`
-      body {
-        font-family: Arial, sans-serif; /* Default font */
-      }
-      img {
-        width: 100px; /* Adjust logo size if needed */
-        height: auto;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th, td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f3f3f3; /* Header background color */
-      }
-      .text-sm {
-        font-size: 14px; /* Adjust font size for printing */
-      }
-      .text-lg {
-        font-size: 18px; /* Adjust font size for printing */
-      }
-      .font-medium {
-        font-weight: 500; /* Font weight */
-      }
-      .font-semibold {
-        font-weight: 600; /* Font weight */
-      }
-      /* Additional styles to match the screen appearance */
-    `);
+    printWindow.document.write('body { font-family: Arial, sans-serif; margin: 0; padding: 0; }');
+    printWindow.document.write('.flex { display: flex; }');
+    printWindow.document.write('.items-center { align-items: center; }');
+    printWindow.document.write('.justify-center { justify-content: center; }');
+    printWindow.document.write('.min-h-screen { min-height: 100vh; }');
+    printWindow.document.write('.bg-gray-100 { background-color: #f7fafc; }');
+    printWindow.document.write('.bg-white { background-color: #fff; }');
+    printWindow.document.write('.rounded-lg { border-radius: 0.5rem; }');
+    printWindow.document.write('.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }');
+    printWindow.document.write('.text-gray-700 { color: #4a5568; }');
+    printWindow.document.write('.text-gray-500 { color: #a0aec0; }');
+    printWindow.document.write('.text-sm { font-size: 0.875rem; }');
+    printWindow.document.write('.text-lg { font-size: 1.125rem; }');
+    printWindow.document.write('.font-semibold { font-weight: 600; }');
+    printWindow.document.write('.font-medium { font-weight: 500; }');
+    printWindow.document.write('.border { border: 1px solid #ccc; }');
+    printWindow.document.write('.border-t { border-top: 1px solid #ccc; }');
+    printWindow.document.write('.border-b { border-bottom: 1px solid #ccc; }');
+    printWindow.document.write('.p-8 { padding: 2rem; }');
+    printWindow.document.write('.py-4 { padding-top: 1rem; padding-bottom: 1rem; }');
+    printWindow.document.write('.mt-4 { margin-top: 1rem; }');
+    printWindow.document.write('.mb-4 { margin-bottom: 1rem; }');
+    printWindow.document.write('.grid { display: grid; }');
+    printWindow.document.write('.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }');
+    printWindow.document.write('.gap-4 { gap: 1.5rem; }');
+    printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 1rem; }');
+    printWindow.document.write('th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }');
+    printWindow.document.write('th { background-color: #e2e8f0; }');
+    printWindow.document.write('.hover\\:bg-gray-100:hover { background-color: #f7fafc; }');
+    printWindow.document.write('.text-right { text-align: right; }');
+
+    // Styles for images
+    printWindow.document.write('img { width: 20px; height: 20px; }');
     printWindow.document.write('</style>');
     printWindow.document.write('</head><body>');
+    
+    // Add the content you want to print
     printWindow.document.write(printSection.innerHTML);
     printWindow.document.write('</body></html>');
+    
     printWindow.document.close();
     printWindow.print();
   } catch (error) { 
     console.log(error);
   }
-},
+}
+
 
   },
 };

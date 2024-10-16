@@ -21,7 +21,7 @@
               Profile
             </router-link>
           </li>
-          <li>
+          <li v-if="role === 'admin'">
             <router-link
               to="/dashboard/settings"
               :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/settings'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/settings') }]"
@@ -29,15 +29,15 @@
               Settings
             </router-link>
           </li>
-          <li>
+          <li v-if="role === 'admin'">
             <router-link
               to="/dashboard/program"
-              :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/program'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/instructor') }]"
+              :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/program'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/program') }]"
             >
               Manage Program
             </router-link>
           </li>
-          <li>
+          <li v-if="role === 'admin'">
             <router-link
               to="/dashboard/student"
               :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/student'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/student') }]"
@@ -45,7 +45,7 @@
               Manage Student
             </router-link>
           </li>
-          <li>
+          <li v-if="role === 'admin' || role == 'instructor'">
             <router-link
               to="/dashboard/grading"
               :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/grading'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/grading') }]"
@@ -53,7 +53,7 @@
               Grading
             </router-link>
           </li>
-          <li>
+          <li v-if="role === 'admin'">
             <router-link
               to="/dashboard/account"
               :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/account'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/account') }]"
@@ -61,10 +61,10 @@
               Manage Account
             </router-link>
           </li>
-          <li>
+          <li v-if="role === 'admin'">
             <router-link
               to="/dashboard/evaluation"
-              :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/evaluation'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/instructor') }]"
+              :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/evaluation'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/evaluation') }]"
             >
               Manage Evaluation
             </router-link>
@@ -77,22 +77,16 @@
           </li>
         </ul>
       </div>
-    </aside> 
-      <!-- <nav class="w-full flex">
-        <div class="flex flex-row-reverse items-center w-full justify-between bg-gray-800 text-white p-4">
-          <h1 class="self-end">Hello {{ profileName }}</h1>
-        </div>
-      </nav>
-      Main content -->
-      <main class="flex-1 flex flex-col">
-        <bread-crumb />
-        <div class="flex-1 flex justify-center p-6 overflow-x-auto"> <!-- Added overflow-x-auto --> 
-          <div class="w-full h-100%">
-            <router-view></router-view> <!-- This is where nested routes will be rendered -->
-          </div>
-        </div>
-      </main> 
+    </aside>
     
+    <main class="flex-1 flex flex-col">
+      <bread-crumb />
+      <div class="flex-1 flex justify-center p-6 overflow-x-auto"> 
+        <div class="w-full h-100%">
+          <router-view></router-view> 
+        </div>
+      </div>
+    </main>
 
     <!-- Modal -->
     <div v-if="showLogoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -135,13 +129,15 @@ export default {
     },
     mounted() {
       this.role = sessionStorage.getItem("role"); 
+      console.log("asdas",sessionStorage.getItem("profile"))
     }
   },
   mounted() {
+    this.role = sessionStorage.getItem("role"); 
+    console.log("asdas",sessionStorage.getItem("profile"))
     var _this = this;
     let profile = JSON.parse(sessionStorage.getItem('profile'));
-    _this.profileName = profile.fname;
-    console.log(this.profileName)
+    _this.profileName = profile.fname; 
   }
 }
 </script>
