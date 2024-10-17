@@ -47,7 +47,7 @@
             <h2 class="text-lg font-semibold text-gray-700">NORTH EASTERN MINDANAO STATE UNIVERSITY</h2>
             <h3 class="text-sm font-medium text-gray-500">Cantilan, Surigao del Sur</h3>
             <h3 class="text-sm font-medium text-gray-500">Report of Grades</h3>
-            <p class="text-xs text-gray-500">SY: 2021-2022 Term: 1</p>
+            <p class="text-xs text-gray-500">SY: {{ grades.grades.sy }} Term: {{ grades.grades.sem }}</p>
           </div>
         </div>
         <!-- <div class="text-right">
@@ -144,6 +144,7 @@ export default {
         const data = response.data.data[0];
        
         this.grades = data;
+        console.log(this.grades.grades.sy)
       } catch (error) {
         this.errorMessage = 'Login failed. Please try again.';
         console.log(error);

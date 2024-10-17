@@ -1,5 +1,6 @@
 <template>
   <div class="table-container">
+    <h1 class="bold text-lg mb-5 ">Active: <strong>{{ activeSchoolYear.sem }} SEM. A.Y.  {{ activeSchoolYear.year }} </strong></h1>
     <label for="file-select" class="file-select-label">Select Class Records:</label>
     <select id="file-select" v-model="selectedFile" @change="loadFile" class="file-select">
       <option value="" disabled>Select a file</option>
@@ -14,6 +15,7 @@
     <button @click="exportToExcel" class="export-button">Export to Excel</button>
     <button @click="openRenameModal" class="save-button">Save Changes</button>
     <button @click="submitToAdmin" class="save-button">Submit to admin</button>
+    
 
     <div v-if="isRenameModalVisible" class="rename-modal">
       <div class="rename-content">
@@ -78,6 +80,7 @@ export default defineComponent({
     const hotTableRef = ref(null);
     const data = ref([]);
     const files = ref([]);
+    const activeSchoolYear = ref('');
     const selectedFile = ref(null);
     const zoomLevel = ref(1); // New state variable for zoom level
     const loading = ref(false); // New loading state
@@ -177,6 +180,22 @@ export default defineComponent({
         }
       }
     };
+
+    const fetchSchoolYear = async () => {
+      let config = {
+          method: 'get',
+          maxBodyLength: Infinity,
+          url: 'http://localhost:1337/api/school-years?filters[active][$eq]=active',
+          headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${sessionStorage.getItem("jwt")}`
+          }
+        };
+
+        const sy = await axios.request(config)
+        console.log(sy.data.data[0])
+        activeSchoolYear.value = sy.data.data[0].attributes
+    }
 
     // Handle file change
     const onFileChange = (e) => {
@@ -292,11 +311,32 @@ const saveToExcel = async () => {
 
 const submitToAdmin = async () => {
   console.log(data.value)
+
+    const semester = data.value[8][6].charAt(0); 
+    const schoolYear = data.value[8][6].match(/\d{4}-\d{4}/)[0];
+
+    const response = await axios.get(`http://localhost:1337/api/school-years?filters[year][$eq]=${schoolYear}&filters[sem][$eq]=${semester}&filters[active][$eq]=true`, {
+      headers: {
+        'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
+      }
+    });
+
+    if (response.data.data.length < 1) {
+      alert("School year not active")
+      return
+    }
+
   const students = data.value.reduce((acc, cur, index) => {
     if (index > 11 && ["PASSED", "FAILED", "INC", "N/A"].includes(cur[7])) {
+
+      const semester = data.value[8][6].charAt(0); 
+      const schoolYear = data.value[8][6].match(/\d{4}-\d{4}/)[0]; 
+ 
+
       acc.push({
         subject_no: data.value[8][2],
-        semester: data.value[8][6],
+        semester: semester,
+        sy: schoolYear,
         description: data.value[9][2],
         "course": data.value[10][2],
         instructor: data.value[10][6],
@@ -494,9 +534,11 @@ const s2ab = (s) => {
       container.style.height = `${700 / zoomLevel.value}px`;
     };
 
+    
+
     // Fetch files when component is mounted
     fetchFiles();
-
+    fetchSchoolYear();
     return {
       hotTableRef,
       data,
@@ -515,10 +557,12 @@ const s2ab = (s) => {
       loadFile,
       zoomIn,
       zoomOut,
+      activeSchoolYear,
       submitToAdmin
-    };
+    }; 
   },
 });
+ 
 </script>
 
 
@@ -527,6 +571,7 @@ const s2ab = (s) => {
 .table-container {
   width: 1500px;
   height: 100%;
+  padding: 5px;
   padding-bottom: 50px;
   background-color: #f9f9f9; /* Light background for contrast */
   border-radius: 8px;

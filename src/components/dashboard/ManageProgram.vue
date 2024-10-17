@@ -76,11 +76,12 @@
 
           <div class="mb-4">
             <label for="sy" class="block text-sm font-medium text-gray-700">School Year:</label>
-            <input type="text" v-model="programForm.sy" id="sy" required placeholder="e.g. 2024-2025" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" @input="validateSchoolYear"/>
-            <p v-if="schoolYearError" class="text-red-500 text-sm mt-1">{{ schoolYearError }}</p>
+            <select v-model="programForm.sy" id="sy" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+              <option v-for="schoolYear in schoolYears" :key="schoolYear.id" :value="schoolYear.id">{{ schoolYear.attributes.year }}</option>
+            </select>
           </div>
 
-          <button v-if="!schoolYearError" type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">{{ isEditing ? 'Update' : 'Create' }}</button>
+          <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">{{ isEditing ? 'Update' : 'Create' }}</button>
           <button type="button" @click="closeModal" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 ml-2">Cancel</button>
         </form>
       </div>
@@ -96,6 +97,7 @@ export default {
   data() {
     return {
       programs: [],
+      schoolYears: [],
       isModalOpen: false,
       isEditing: false,
       programForm: {
@@ -105,8 +107,7 @@ export default {
         code: '',
         sy: '',
         status: ''
-      },
-      schoolYearError: ''
+      }
     };
   },
   methods: {
@@ -123,6 +124,20 @@ export default {
         console.error('Error fetching programs:', error);
       }
     },
+    async fetchSchoolYears() {
+      try {
+        const token = sessionStorage.getItem('jwt');
+        const response = await axios.get('http://localhost:1337/api/school-years?filters[active][$eq]=active', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        this.schoolYears = response.data.data;
+      } catch (error) {
+        console.error('Error fetching school years:', error);
+      }
+    },
+    
     async createProgram() {
       try {
         const token = sessionStorage.getItem('jwt');
@@ -143,14 +158,14 @@ export default {
       this.isModalOpen = true;
     },
     openEditModal(program) {
-      this.programForm = { ...program.attributes, ...program };
+      this.programForm = {...program.attributes, id: program.id};
       this.isEditing = true;
       this.isModalOpen = true;
     },
     async updateProgram() {
       try {
         const token = sessionStorage.getItem('jwt');
-        await axios.put(`http://localhost:1337/api/subjects/${this.programForm.id}`, {data: this.programForm}, {
+        await axios.put(`http://localhost:1337/api/subjects/${this.programForm.id}`, {data: {...this.programForm}}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -169,7 +184,7 @@ export default {
             'Authorization': `Bearer ${token}`
           }
         });
-        this.programs = this.programs.filter(program => program.id !== id);
+        this.fetchPrograms();
       } catch (error) {
         console.error('Error deleting program:', error);
       }
@@ -179,26 +194,21 @@ export default {
     },
     resetForm() {
       this.programForm = {
-        id: null,
         description: '',
-        sem: '1',
-        sy: '',
+        sem: '',
         code: '',
+        sy: '',
         status: ''
       };
-      this.schoolYearError = '';
-    },
-    validateSchoolYear() {
-      const syPattern = /^\d{4}-\d{4}$/;
-      if (!syPattern.test(this.programForm.sy)) {
-        this.schoolYearError = 'Invalid school year format. Use YYYY-YYYY.';
-      } else {
-        this.schoolYearError = '';
-      }
     }
   },
   mounted() {
     this.fetchPrograms();
+    this.fetchSchoolYears();
   }
 };
 </script>
+
+<style scoped>
+/* Your styles here */
+</style>

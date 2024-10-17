@@ -51,10 +51,13 @@
             <td class="p-4">{{ student.attributes.gender }}</td>
             <td class="p-4">{{ student.attributes.activated }}</td>
             <td class="p-4 flex space-x-2">
-              <button @click="openEditModal(student)" class="bg-blue-500 text-white px-3 py-1 rounded-md">
+              <button @click="viewGrades(student)" class="bg-blue-500 text-white px-3 py-1 rounded-md">
+                View Grade
+              </button>
+              <button v-if="role === 'admin'"  @click="openEditModal(student)" class="bg-blue-500 text-white px-3 py-1 rounded-md">
                 Edit
               </button>
-              <button @click="deleteStudent(student.id)" class="bg-red-500 text-white px-3 py-1 rounded-md">
+              <button  v-if="role === 'admin'"  @click="deleteStudent(student.id)" class="bg-red-500 text-white px-3 py-1 rounded-md">
                 Delete
               </button>
             </td>
@@ -148,15 +151,50 @@
         </div>
       </div>
     </transition>
+
+
+    <!-- View Grades Modal -->
+    <transition name="fade">
+      <div v-if="isGradesModalOpen" class="fixed w-[100%] inset-0 flex items-center p-2 justify-center bg-gray-800 bg-opacity-50 overflow-auto">
+        <div class="bg-white p-6 mt-10 rounded-lg shadow-lg w-[60%]">
+          <h2 class="text-2xl font-semibold mb-4">Grades for Student ID: {{ currentStudentId }}</h2>
+          <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+            <thead>
+              <tr class="border-b">
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Subject</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Description</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">School year</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Semester</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Units</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="grade in grades" :key="grade.subject">
+                <td class="p-4">{{ grade.subject_no }}</td>
+                <td class="p-4">{{ grade.description }}</td> 
+                <td class="p-4">{{ grade.sy }}</td>
+                <td class="p-4">{{ grade.semester }}</td>
+                <td class="p-4">{{ grade.units }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="flex justify-end mt-4">
+            <button @click="closeGradesModal" class="bg-gray-500 text-white px-4 py-2 rounded-md">Close</button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
-
+import axios from 'axios'; 
+const isGradesModalOpen = ref();
 const students = ref([]);
 const isModalOpen = ref(false);
 const isEditing = ref(false);
+const role = ref('')
+const grades = ref();
 const studentForm = ref({
   id: '',
   student_id: '',
@@ -293,8 +331,26 @@ const filteredStudents = computed(() => {
 });
 
 
+const viewGrades = async (student) => {
+  try {
+    // const response = await axios.get(`/api/grades?id=${student.id}`);
+    grades.value = student.grades; // Assuming grades are in response.data
+    currentStudentId.value = student.id;
+    isGradesModalOpen.value = true; // Open grades modal
+  } catch (error) {
+    console.error('Error fetching grades:', error);
+  }
+};
+
+const closeGradesModal = () => {
+  isGradesModalOpen.value = false;
+  grades.value = []; // Clear grades when closing modal
+};
+
+
 // Load students when the component is mounted
 onMounted(() => {
+  role.value = sessionStorage.getItem("role")
   loadStudents();
 });
 </script>

@@ -37,7 +37,7 @@
               Manage Program
             </router-link>
           </li>
-          <li v-if="role === 'admin'">
+          <li v-if="role === 'admin' || role === 'instructor'">
             <router-link
               to="/dashboard/student"
               :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/student'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/student') }]"
