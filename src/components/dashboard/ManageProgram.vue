@@ -4,33 +4,33 @@
       <h1 class="text-3xl font-bold">Manage Programs</h1>
 
       <!-- Button to open the Create Program Modal -->
-      <button v-if="role === 'admin'" @click="openCreateModal" class="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">Add Program</button>
+      <button v-if="role === 'admin'" @click="openCreateModal" class="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition text-[12px]">Add Program</button>
     </div>
 
     <!-- Program List --> 
     <div class="overflow-x-auto mt-10">
-      <table class="min-w-full bg-white border border-gray-200">
+      <table class="min-w-full bg-white border border-gray-200 text-[12px]">
         <thead>
           <tr>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Code</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Program</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Units</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Semester</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">School Year</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Year Level</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Status</th>
-            <th v-if="role === 'admin'" class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-sm font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Code</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Program</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Units</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Semester</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">School Year</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Year Level</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Status</th>
+            <th v-if="role === 'admin'" class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-center font-medium text-gray-700 uppercase text-[12px]">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="program in programs" :key="program.id" class="border-b border-gray-200">
-            <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.code }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.description }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.units }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.sem }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.sy }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.year }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.status }}</td>
+          <tr v-for="program in programs" :key="program.id" class="border-b border-gray-200 hover:bg-yellow-200">
+            <td class="px-6 whitespace-nowrap">{{ program.attributes.code }}</td>
+            <td class="px-6 whitespace-nowrap">{{ program.attributes.description }}</td>
+            <td class="px-6 whitespace-nowrap">{{ program.attributes.units }}</td>
+            <td class="px-6  whitespace-nowrap">{{ program.attributes.sem }}</td>
+            <td class="px-6 whitespace-nowrap">{{ program.attributes.sy }}</td>
+            <td class="px-6  whitespace-nowrap">{{ program.attributes.year }}</td>
+            <td class="px-6  whitespace-nowrap">{{ program.attributes.status }}</td>
             <td v-if="role === 'admin'" class="px-6 py-4 whitespace-nowrap text-center">
               <button @click="openEditModal(program)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Edit</button>
               <button @click="deleteProgram(program.id)" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 ml-2">Delete</button>
@@ -104,6 +104,7 @@
 
 <script>
 import axios from 'axios';
+import { toast } from 'vue3-toastify';
 
 export default {
   name: 'ManageProgramComponent',
@@ -136,6 +137,7 @@ export default {
         });
         this.programs = response.data.data;
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error fetching programs:', error);
       }
     },
@@ -149,6 +151,7 @@ export default {
         });
         this.schoolYears = response.data.data;
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error fetching school years:', error);
       }
     },
@@ -163,7 +166,9 @@ export default {
         });
         this.fetchPrograms();
         this.closeModal();
+        toast.success("Program Created");
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error creating program:', error);
       }
     },
@@ -187,7 +192,9 @@ export default {
         });
         this.fetchPrograms();
         this.closeModal();
+        toast.success("Program Updated");
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error updating program:', error);
       }
     },
@@ -200,7 +207,9 @@ export default {
           }
         });
         this.fetchPrograms();
+        toast.success("Program deleted");
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error deleting program:', error);
       }
     },

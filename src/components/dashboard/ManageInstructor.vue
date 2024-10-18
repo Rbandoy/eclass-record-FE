@@ -330,6 +330,7 @@
 <script>
 import axios from 'axios';
 import Loading from '../reuseable/LoadingComponent.vue';
+import { toast } from 'vue3-toastify';
 
 export default {
   name: 'InstructorComponent',
@@ -375,7 +376,9 @@ export default {
           }
         });
         this.fetchInstructors();
+        toast.success("Account Deleted");
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error deleting instructor:', error);
       }
     },
@@ -388,7 +391,9 @@ export default {
           }
         });
         this.fetchInstructors();
+        toast.success("Account Blocked");
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error deactivating instructor:', error);
       }
     },
@@ -402,7 +407,9 @@ export default {
           }
         });
         this.fetchInstructors();
-      } catch (error) {
+        toast.success("Account Activated");
+      } catch (error) { 
+        toast.error(error.response.data.error.message);
         console.error('Error deactivating instructor:', error);
       }
     },
@@ -417,6 +424,7 @@ export default {
         });
         this.instructors = response.data;
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error fetching instructors:', error);
       } finally {
         this.isLoading = false;
@@ -433,6 +441,7 @@ export default {
         });
         this.roles = response.data.roles;  // Store the fetched roles
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error fetching roles:', error);
       } finally {
         this.isLoading = false;
@@ -452,11 +461,12 @@ export default {
         console.log("asd",this.programs) 
          // Store the fetched programs
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error fetching programs:', error);
       } finally {
         this.isLoading = false;
       }
-    },
+    }, 
     async createInstructor() {
       try {
         this.loading = true
@@ -467,14 +477,16 @@ export default {
           }
         });
         this.instructors.push(response.data);
+        toast.success("Account Created");
         this.resetNewInstructor();
         this.closeModal(); // Close the modal after successful creation
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error creating instructor:', error);
       } finally {
         this.isLoading = false;
       }
-    },
+    }, 
     async updateInstructor() {
       try {
         this.loading = true
@@ -488,8 +500,10 @@ export default {
         });
         this.fetchInstructors();  // Refresh the list
         this.resetNewInstructor();
+        toast.success("Account Updated");
         this.closeModal();  // Close the modal after successful update
       } catch (error) {
+        toast.error(error.response.data.error.message);
         console.error('Error updating instructor:', error);
       } finally {
         this.isLoading = false;
@@ -530,6 +544,7 @@ export default {
     this.fetchInstructors();  // Refresh the list
     this.closeProgramModal();
   } catch (error) {
+    toast.error(error.response.data.error.message);
     console.error('Error assigning program:', error);
   }
 },

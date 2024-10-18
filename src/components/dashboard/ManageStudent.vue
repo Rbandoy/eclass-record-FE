@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="mb-6 flex flex-row justify-between">
       <h1 class="text-3xl font-bold">Manage Students</h1>
-      <button @click="openCreateModal" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md">
+      <button @click="openCreateModal" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-md text-[12px]">
         Add Student
       </button>
     </div>
@@ -20,25 +20,25 @@
 
     <!-- Student List -->
     <div v-if="filteredStudents.length" class="mb-6">
-      <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+      <table class="min-w-full bg-white border border-gray-200 rounded-lg text-[12px]">
         <thead>
           <tr class="border-b">
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Student ID</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Last Name</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">First Name</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Middle Name</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Email</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Mobile</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Status</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Address</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Gender</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Activated</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Student ID</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Last Name</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">First Name</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Middle Name</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Email</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Mobile</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Status</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Address</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Gender</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Activated</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr
-          :class="{'bg-red-100': !student.attributes.activated}"
+          :class="{'bg-yellow-200': !student.attributes.activated}"
           v-for="student in filteredStudents" :key="student.id" class="border-b">
             <td class="p-4">{{ student.attributes.student_id }}</td>
             <td class="p-4">{{ student.attributes.lname }}</td>
@@ -71,7 +71,7 @@
 
     <!-- Add/Edit Student Modal -->
     <transition name="fade">
-      <div v-if="isModalOpen" class="fixed inset-0 flex items-center p-2 justify-center bg-gray-800 bg-opacity-50 overflow-auto">
+      <div v-if="isModalOpen" class="fixed inset-0 flex items-center p-2 justify-center bg-gray-800 bg-opacity-50 overflow-auto text-[12px]">
         <div class="bg-white p-6 mt-10 rounded-lg shadow-lg max-w-md h-auto w-full">
           <h2 class="text-2xl font-semibold mb-4">{{ isEditing ? 'Edit Student' : 'Add New Student' }}</h2>
           <form @submit.prevent="isEditing ? updateStudent() : createStudent()">
@@ -159,18 +159,18 @@
 
     <!-- View Grades Modal -->
     <transition name="fade">
-      <div v-if="isGradesModalOpen" class="fixed w-[100%] inset-0 flex items-center p-2 justify-center bg-gray-800 bg-opacity-50 overflow-auto">
-        <div class="bg-white p-6 mt-10 rounded-lg shadow-lg w-[60%]">
-          <h2 class="text-2xl font-semibold mb-4">Grades for Student ID: {{ currentStudentId }}</h2>
-          <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+      <div v-if="isGradesModalOpen" class="fixed w-[100%] inset-0 flex items-center p-2 justify-center bg-gray-800 bg-opacity-50 overflow-auto text-[12px]">
+        <div class="bg-white p-6 mt-10 rounded-lg shadow-lg w-[60%] text-[12px]">
+          <h2 class="text-lg font-semibold mb-4">Grades for Student ID: {{ currentStudentId }}</h2>
+          <table class="min-w-full bg-white border border-gray-200 rounded-lg text-[12px]">
             <thead>
               <tr class="border-b">
-                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Subject</th>
-                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Description</th>
-                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">School year</th>
-                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Semester</th>
-                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Grade</th>
-                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Units</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Subject</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Description</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left   font-medium text-gray-700 uppercase text-[12px]">School year</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Semester</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Grade</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Units</th>
               </tr>
             </thead>
             <tbody>

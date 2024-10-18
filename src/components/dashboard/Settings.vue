@@ -1,9 +1,9 @@
 <template>
   <div class="manage-school-year">
     <h2 class="text-3xl font-bold text-center mb-6">Manage School Years</h2>
-    <button @click="showModal = true" class="btn-primary mb-4 bg-blue-600">Add School Year</button>
+    <button @click="showModal = true" class="btn-primary mb-4 bg-blue-600 text-[12px]">Add School Year</button>
 
-    <table class="table-auto border-collapse border border-gray-300 w-full">
+    <table class="table-auto border-collapse border border-gray-300 w-full text-[12px]">
       <thead>
         <tr class="bg-gray-100">
           <th class="border border-gray-300 px-4 py-2">School Year</th>
@@ -12,17 +12,18 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="year in schoolYears" :key="year.id">
+        <tr 
+         :class="{ 'bg-yellow-200': year.attributes.active}"
+        class="hover:bg-blue-600 cursor-pointer" @click="toggleActiveStatus(year)" v-for="year in schoolYears" :key="year.id">
           <td class="border border-gray-300 px-4 py-2">{{ year.attributes.year }}</td>
           <td class="border border-gray-300 px-4 py-2">{{ year.attributes.sem }}</td>
-          <td class="border border-gray-300 px-4 py-2">
+          <td class="border border-gray-300 px-4 py-2 align-middle items-center">
             <input
               type="checkbox"
-              :checked="year.attributes.active"
-              @change="toggleActiveStatus(year)"
+              :checked="year.attributes.active" 
               class="toggle-checkbox"
             />
-            <span>{{ year.attributes.active ? 'Active' : 'Not Active' }}</span>
+            <span class="ml-2">{{ year.attributes.active ? 'Active' : 'Not Active' }}</span>
           </td>
         </tr>
       </tbody>
@@ -32,7 +33,7 @@
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
         <h3 class="text-xl font-bold mb-4">Add School Year</h3>
-        <form @submit.prevent="addSchoolYear">
+        <form class="text-[12px]" @submit.prevent="addSchoolYear">
           <label for="year">School Year:</label>
           <input type="text" v-model="newSchoolYear.year" required class="input-field" />
 
@@ -40,11 +41,11 @@
           <input type="text" v-model="newSchoolYear.sem" required class="input-field" />
 
           <label for="active">Active Status:</label>
-          <input type="checkbox" v-model="newSchoolYear.active" />
-          <span>{{ newSchoolYear.active ? 'Active' : 'Not Active' }}</span>
+          <input class="cursor-pointer" type="checkbox" v-model="newSchoolYear.active" />
+          <span class="ml-2">{{ newSchoolYear.active ? 'Active' : 'Not Active' }}</span>
           <div class="modal-buttons">
             <button type="submit" class="btn-primary  bg-blue-600">Add School Year</button>
-            <button type="button" @click="showModal = false" class="btn-secondary">Cancel</button>
+            <button type="button" @click="showModal = false" class="btn-secondary text-[12px]">Cancel</button>
           </div>
         </form>
       </div>
@@ -54,6 +55,7 @@
 
 <script>
 import axios from 'axios';
+import { toast } from 'vue3-toastify';
 
 export default {
   name: "SchoolYearComponent",
@@ -80,11 +82,19 @@ export default {
     async toggleActiveStatus(year) {
       year.attributes.active = !year.attributes.active;
       const updatedYear = { data: { active: year.attributes.active } };
-      await axios.put(`http://localhost:1337/api/school-years/${year.id}`, updatedYear, {
+
+      try {
+        await axios.put(`http://localhost:1337/api/school-years/${year.id}`, updatedYear, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
         }
-      });
+        });
+        toast.success(`School Year ${year.attributes.year} ${year.attributes.active == true ? "Activated": "Disabled"} `)
+      } catch (error) {
+        toast.error(error.response.data.error.message);
+      }
+      
+      
     },
     async addSchoolYear() {
       try {
@@ -129,8 +139,7 @@ h2 {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
+  cursor: pointer; 
 }
 
 .btn-primary:hover {
@@ -201,7 +210,8 @@ th {
 
 .modal-buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 3px;
   margin-top: 20px;
 }
 </style>
