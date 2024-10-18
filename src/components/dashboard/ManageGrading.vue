@@ -14,7 +14,7 @@
     </label>
     <button @click="exportToExcel" class="export-button">Export to Excel</button>
     <button @click="openRenameModal" class="save-button">Save Changes</button>
-    <button @click="submitToAdmin" class="save-button">Submit to admin</button>
+    <button @click="submitToAdmin" class="save-button">Submit Grades</button>
     
 
     <div v-if="isRenameModalVisible" class="rename-modal">

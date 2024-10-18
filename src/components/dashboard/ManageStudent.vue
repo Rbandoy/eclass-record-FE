@@ -138,6 +138,10 @@
                 <option value="false">False</option> 
               </select>
             </div>
+            <div class="mb-4">
+              <label for="address" class="block text-sm font-medium text-gray-700">Guardian Telegram:</label>
+              <input type="text" id="address" v-model="studentForm.telegram" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
+            </div>
             <!-- ... (same as before) ... -->
             <div class="flex justify-end">
               <button @click="closeModal" type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md mr-2">
@@ -165,6 +169,7 @@
                 <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Description</th>
                 <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">School year</th>
                 <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Semester</th>
+                <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Grade</th>
                 <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Units</th>
               </tr>
             </thead>
@@ -174,6 +179,7 @@
                 <td class="p-4">{{ grade.description }}</td> 
                 <td class="p-4">{{ grade.sy }}</td>
                 <td class="p-4">{{ grade.semester }}</td>
+                <td class="p-4">{{ grade.grade }}</td>
                 <td class="p-4">{{ grade.units }}</td>
               </tr>
             </tbody>
@@ -210,6 +216,7 @@ const studentForm = ref({
   activated: '',
   username: '',
   password: '',
+  telegram:''
 });
 const currentStudentId = ref(null);
 const searchQuery = ref('');
@@ -290,7 +297,8 @@ const openCreateModal = () => {
     bdate: '',
     mobile: '',
     address: '',
-    gender: ''
+    gender: '',
+    telegram: ''
   };
   isEditing.value = false;
   isModalOpen.value = true;

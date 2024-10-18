@@ -326,6 +326,7 @@ export default {
         gender: '',
         phone_no: '',
         blocked: false,
+        activated: ''
       },
       roles: [],
       programs: [],

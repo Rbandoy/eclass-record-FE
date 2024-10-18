@@ -4,7 +4,7 @@
       <h1 class="text-3xl font-bold">Manage Programs</h1>
 
       <!-- Button to open the Create Program Modal -->
-      <button @click="openCreateModal" class="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">Add Program</button>
+      <button v-if="role === 'admin'" @click="openCreateModal" class="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">Add Program</button>
     </div>
 
     <!-- Program List --> 
@@ -18,7 +18,7 @@
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Semester</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">School Year</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Status</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-sm font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+            <th v-if="role === 'admin'" class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-sm font-medium text-gray-700 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -29,7 +29,7 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.sem }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.sy }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.status }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-center">
+            <td v-if="role === 'admin'" class="px-6 py-4 whitespace-nowrap text-center">
               <button @click="openEditModal(program)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Edit</button>
               <button @click="deleteProgram(program.id)" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 ml-2">Delete</button>
             </td>
@@ -96,6 +96,7 @@ export default {
   name: 'ManageProgramComponent',
   data() {
     return {
+      role: '',
       programs: [],
       schoolYears: [],
       isModalOpen: false,
@@ -203,6 +204,7 @@ export default {
     }
   },
   mounted() {
+    this.role = sessionStorage.getItem("role")
     this.fetchPrograms();
     this.fetchSchoolYears();
   }

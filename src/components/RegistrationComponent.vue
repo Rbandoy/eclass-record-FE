@@ -255,7 +255,16 @@
             <option value="Irregular">Irregular</option> 
           </select>
         </div>
-        
+        <div class="mb-4">
+          <label for="course">Guardian Telegram Username:</label>
+          <input
+            type="text"
+            id="course"
+            v-model="studentForm.telegram"
+            class="input-field"
+            :disabled="isEdit"
+          />
+        </div>
       </div>
 
       <!-- Submit and Go Back Buttons -->
@@ -302,7 +311,8 @@ export default {
       course: '',
       year: '',
       password: '',
-      username: ''
+      username: '',
+      telegram: ''
     });
 
     const roles = ref([]); // Fetch or set your roles here
@@ -359,7 +369,8 @@ export default {
           course: studentForm.value.course,
           year: studentForm.value.year,
           password: studentForm.value.password,
-          username: studentForm.value.username
+          username: studentForm.value.username,
+          telegram: studentForm.value.telegram
         };
 
         try {

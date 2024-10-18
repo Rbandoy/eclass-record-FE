@@ -29,12 +29,12 @@
               Settings
             </router-link>
           </li>
-          <li v-if="role === 'admin'">
+          <li v-if="role === 'admin' || role === 'evaluator'">
             <router-link
               to="/dashboard/program"
               :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/program'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/program') }]"
             >
-              Manage Program
+              Program
             </router-link>
           </li>
           <li v-if="role === 'admin' || role === 'instructor'">
@@ -42,7 +42,7 @@
               to="/dashboard/student"
               :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/student'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/student') }]"
             >
-              Manage Student
+              Student
             </router-link>
           </li>
           <li v-if="role === 'admin' || role == 'instructor'">
@@ -58,15 +58,15 @@
               to="/dashboard/account"
               :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/account'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/account') }]"
             >
-              Manage Account
+              Account
             </router-link>
           </li>
-          <li v-if="role === 'admin'">
+          <li v-if="role === 'evaluator'">
             <router-link
               to="/dashboard/evaluation"
               :class="['block px-4 py-2 rounded', { 'bg-gray-700 text-white': isActive('/dashboard/evaluation'), 'text-gray-300 hover:bg-gray-700': !isActive('/dashboard/evaluation') }]"
             >
-              Manage Evaluation
+              Evaluation
             </router-link>
           </li>
           <!-- Logout Button -->
