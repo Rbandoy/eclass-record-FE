@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     async fetchSchoolYears() {
-      const response = await axios.get(`https://api.nemsu-grading.online/api/school-years`, {
+      const response = await axios.get(`http://localhost:1337/api/school-years`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
         }
@@ -80,7 +80,7 @@ export default {
     async toggleActiveStatus(year) {
       year.attributes.active = !year.attributes.active;
       const updatedYear = { data: { active: year.attributes.active } };
-      await axios.put(`https://api.nemsu-grading.online/api/school-years/${year.id}`, updatedYear, {
+      await axios.put(`http://localhost:1337/api/school-years/${year.id}`, updatedYear, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
         }
@@ -88,7 +88,7 @@ export default {
     },
     async addSchoolYear() {
       try {
-        const response = await axios.post(`https://api.nemsu-grading.online/api/school-years`, {
+        const response = await axios.post(`http://localhost:1337/api/school-years`, {
           data: this.newSchoolYear
         }, {
           headers: {

@@ -1,10 +1,11 @@
 <template>
   <div class="container mx-auto p-6">
+    <loading :isLoading="isLoading" />
     <div class="flex flex-row justify-between">
       <h1 class="text-3xl font-bold mb-6">Users Account</h1>
       <button 
         @click="openCreateModal" 
-        class="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+        class="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition text-[12px]"
       >
         Create Account
       </button>
@@ -24,9 +25,9 @@
           {{ isEditing ? 'Update Account' : 'Add New Account' }}
         </h2>
         <!-- Add or Update Instructor Form -->
-<form @submit.prevent="isEditing ? updateInstructor() : createInstructor()">
+<form class="text-[12px] text-nowrap" @submit.prevent="isEditing ? updateInstructor() : createInstructor()">
   <div class="mb-4">
-    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+    <label for="username" class="block text-[12px] text-nowrap font-medium text-gray-700">Username</label>
     <input
       v-model="newInstructor.username"
       id="username"
@@ -35,8 +36,8 @@
       required
     />
   </div>
-  <div class="mb-4">
-    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+  <div v-if="!isEditing" class="mb-4">
+    <label for="password" class="block text-[12px] text-nowrap font-medium text-gray-700">Password</label>
     <input
       v-model="newInstructor.password"
       id="password"
@@ -46,7 +47,7 @@
     />
   </div>
   <div class="mb-4">
-    <label for="fname" class="block text-sm font-medium text-gray-700">First Name</label>
+    <label for="fname" class="block text-[12px] text-nowrap font-medium text-gray-700">First Name</label>
     <input
       v-model="newInstructor.fname"
       id="fname"
@@ -56,7 +57,7 @@
     />
   </div>
   <div class="mb-4">
-    <label for="lname" class="block text-sm font-medium text-gray-700">Last Name</label>
+    <label for="lname" class="block text-[12px] text-nowrap font-medium text-gray-700">Last Name</label>
     <input
       v-model="newInstructor.lname"
       id="lname"
@@ -66,7 +67,7 @@
     />
   </div>
   <div class="mb-4">
-    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+    <label for="email" class="block text-[12px] text-nowrap font-medium text-gray-700">Email</label>
     <input
       v-model="newInstructor.email"
       id="email"
@@ -76,7 +77,7 @@
     />
   </div>
   <div class="mb-4">
-    <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+    <label for="address" class="block text-[12px] text-nowrap font-medium text-gray-700">Address</label>
     <input
       v-model="newInstructor.address"
       id="address"
@@ -85,7 +86,7 @@
     />
   </div>
   <div class="mb-4">
-    <label for="bdate" class="block text-sm font-medium text-gray-700">Birth Date</label>
+    <label for="bdate" class="block text-[12px] text-nowrap font-medium text-gray-700">Birth Date</label>
     <input
       v-model="newInstructor.bdate"
       id="bdate"
@@ -94,7 +95,7 @@
     />
   </div>
   <div class="mb-4">
-    <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+    <label for="role" class="block text-[12px] text-nowrap font-medium text-gray-700">Role</label>
     <select
       v-model="newInstructor.role"
       id="role"
@@ -107,7 +108,7 @@
     </select>
   </div>
   <div class="mb-4">
-    <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+    <label for="gender" class="block text-[12px] text-nowrap font-medium text-gray-700">Gender</label>
     <select
       v-model="newInstructor.gender"
       id="gender"
@@ -120,7 +121,7 @@
     </select>
   </div>
   <div class="mb-4">
-    <label for="phone_no" class="block text-sm font-medium text-gray-700">Phone Number</label>
+    <label for="phone_no" class="block text-[12px] text-nowrap font-medium text-gray-700">Phone Number</label>
     <input
       v-model="newInstructor.phone_no"
       id="phone_no"
@@ -129,9 +130,9 @@
     />
   </div>
   <div class="mb-4">
-    <label for="gender" class="block text-sm font-medium text-gray-700">Activate</label>
+    <label for="gender" class="block text-[12px] text-nowrap font-medium text-gray-700">Activate</label>
     <select
-      v-model="newInstructor.activate"
+      v-model="newInstructor.activated"
       id="activates"
       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
       required
@@ -160,40 +161,43 @@
     </div>
 
     <!-- Instructor list as a table --> 
-    <div class="overflow-x-auto mt-10">
-      <table class="min-w-full bg-white border border-gray-200">
+    <div class="overflow-x-auto mt-10 text-[12px] text-nowrap">
+      <table class="min-w-full bg-white border border-gray-200 text-[12px] text-nowrap">
         <thead>
           <tr>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-[12px] text-nowrap font-medium text-gray-700 uppercase ">
               Username
             </th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-[12px] text-nowrap font-medium text-gray-700 uppercase tracking-wider">
               Role
             </th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-[12px] text-nowrap font-medium text-gray-700 uppercase">
               First Name
             </th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-[12px] text-nowrap font-medium text-gray-700 uppercase">
               Last Name
             </th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-[12px] text-nowrap font-medium text-gray-700 uppercase">
               Email
             </th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-[12px] text-nowrap font-medium text-gray-700 uppercase ">
               Gender
             </th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-[12px] text-nowrap font-medium text-gray-700 uppercase">
               Phone Number
             </th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-[12px] text-nowrap font-medium text-gray-700 uppercase">
               Activated
             </th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-sm font-medium text-gray-700 uppercase tracking-wider">
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px] text-nowrap">
+              Account Status
+            </th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-center  font-medium text-gray-700 uppercase  text-[12px] text-nowrap">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="text-[12px] text-nowrap">
           <tr 
             v-for="instructor in instructors" 
             :key="instructor.id" 
@@ -223,20 +227,37 @@
             <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200">
               {{ instructor.activated }}
             </td>
+
+            <td
+              class="px-6 py-4 whitespace-nowrap border-b border-gray-200"
+              :class="{ 'text-red-500': instructor.blocked }"
+            >
+              {{ instructor.blocked ? "Blocked" : "Active" }}
+            </td>
             <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-center">
               <button 
                 @click="openEditModal(instructor)" 
-                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-blue-600 transition"
               >
                 View
               </button>
               <button 
+                v-if="instructor.role.type != 'admin'"
                 @click="deleteInstructor(instructor.id)" 
                 class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition ml-2"
               >
                 Delete
               </button>
               <button 
+              v-if="instructor.role.type != 'admin'"
+                :class="{ 'bg-blue-600': instructor.blocked , 'bg-red-600': !instructor.blocked ,}"
+                @click="instructor.blocked ? reactivatedAccount(instructor.id) : deactivateInstructor(instructor.id)" 
+                class="px-3 py-1 text-white rounded hover:bg-yellow-600 transition ml-2"
+              >
+                {{ instructor.blocked ? "Activate" : "Block"}} Account
+              </button>
+              <button 
+                v-if="false"
                 @click="openAssignProgramModal(instructor)" 
                 class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition ml-2"
               >
@@ -308,11 +329,16 @@
 
 <script>
 import axios from 'axios';
+import Loading from '../reuseable/LoadingComponent.vue';
 
 export default {
   name: 'InstructorComponent',
+  components: {
+    Loading,
+  },
   data() {
-    return {
+    return { 
+      isLoading: false,
       newInstructor: {
         username: '',
         password: '',
@@ -325,7 +351,7 @@ export default {
         bdate: '',
         gender: '',
         phone_no: '',
-        blocked: false,
+        blocked: true,
         activated: ''
       },
       roles: [],
@@ -366,8 +392,23 @@ export default {
         console.error('Error deactivating instructor:', error);
       }
     },
+
+    async reactivatedAccount(id) {
+      try {
+        const token = sessionStorage.getItem('jwt');
+        await axios.put(`https://api.nemsu-grading.online/api/users/${id}`, { blocked: false }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        this.fetchInstructors();
+      } catch (error) {
+        console.error('Error deactivating instructor:', error);
+      }
+    },
     async fetchInstructors() {
       try {
+        this.isLoading = true;
         const token = sessionStorage.getItem('jwt'); // Retrieve token from sessionStorage 
         const response = await axios.get('https://api.nemsu-grading.online/api/users?populate=*', {
           headers: {
@@ -377,10 +418,13 @@ export default {
         this.instructors = response.data;
       } catch (error) {
         console.error('Error fetching instructors:', error);
+      } finally {
+        this.isLoading = false;
       }
     },
     async fetchRoles() {
       try {
+        this.isLoading = true;
         const token = sessionStorage.getItem('jwt'); 
         const response = await axios.get('https://api.nemsu-grading.online/api/users-permissions/roles', {
           headers: {
@@ -390,10 +434,13 @@ export default {
         this.roles = response.data.roles;  // Store the fetched roles
       } catch (error) {
         console.error('Error fetching roles:', error);
+      } finally {
+        this.isLoading = false;
       }
     },
     async fetchPrograms() {
       try {
+        this.loading = true
         const token = sessionStorage.getItem('jwt'); 
         const response = await axios.get('https://api.nemsu-grading.online/api/subjects', {
           headers: {
@@ -406,10 +453,13 @@ export default {
          // Store the fetched programs
       } catch (error) {
         console.error('Error fetching programs:', error);
+      } finally {
+        this.isLoading = false;
       }
     },
     async createInstructor() {
       try {
+        this.loading = true
         const token = sessionStorage.getItem('jwt'); // Retrieve token from sessionStorage 
         const response = await axios.post('https://api.nemsu-grading.online/api/users/', this.newInstructor, {
           headers: {
@@ -421,10 +471,13 @@ export default {
         this.closeModal(); // Close the modal after successful creation
       } catch (error) {
         console.error('Error creating instructor:', error);
+      } finally {
+        this.isLoading = false;
       }
     },
     async updateInstructor() {
       try {
+        this.loading = true
         const token = sessionStorage.getItem('jwt'); // Retrieve token from sessionStorage 
         const payload = this.newInstructor;
         delete payload.password 
@@ -438,6 +491,8 @@ export default {
         this.closeModal();  // Close the modal after successful update
       } catch (error) {
         console.error('Error updating instructor:', error);
+      } finally {
+        this.isLoading = false;
       }
     },
     async assignProgramToInstructor() {
@@ -523,7 +578,7 @@ export default {
       this.isProgramModalOpen = false;
     }
   },
-  mounted() {
+  mounted() { 
     this.fetchInstructors();
     this.fetchRoles();
     this.fetchPrograms(); // Fetch programs on mount
