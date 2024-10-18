@@ -343,7 +343,7 @@ export default {
     async deleteInstructor(id) {
       try {
         const token = sessionStorage.getItem('jwt');
-        await axios.delete(`http://47.129.3.25:1337/api/users/${id}`, {
+        await axios.delete(`https://api.nemsu-grading.online/api/users/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -356,7 +356,7 @@ export default {
     async deactivateInstructor(id) {
       try {
         const token = sessionStorage.getItem('jwt');
-        await axios.put(`http://47.129.3.25:1337/api/users/${id}`, { blocked: true }, {
+        await axios.put(`https://api.nemsu-grading.online/api/users/${id}`, { blocked: true }, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -369,7 +369,7 @@ export default {
     async fetchInstructors() {
       try {
         const token = sessionStorage.getItem('jwt'); // Retrieve token from sessionStorage 
-        const response = await axios.get('http://47.129.3.25:1337/api/users?populate=*', {
+        const response = await axios.get('https://api.nemsu-grading.online/api/users?populate=*', {
           headers: {
             'Authorization': `Bearer ${token}`  // Include Bearer token in the headers
           }
@@ -382,7 +382,7 @@ export default {
     async fetchRoles() {
       try {
         const token = sessionStorage.getItem('jwt'); 
-        const response = await axios.get('http://47.129.3.25:1337/api/users-permissions/roles', {
+        const response = await axios.get('https://api.nemsu-grading.online/api/users-permissions/roles', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -395,7 +395,7 @@ export default {
     async fetchPrograms() {
       try {
         const token = sessionStorage.getItem('jwt'); 
-        const response = await axios.get('http://47.129.3.25:1337/api/subjects', {
+        const response = await axios.get('https://api.nemsu-grading.online/api/subjects', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -411,7 +411,7 @@ export default {
     async createInstructor() {
       try {
         const token = sessionStorage.getItem('jwt'); // Retrieve token from sessionStorage 
-        const response = await axios.post('http://47.129.3.25:1337/api/users/', this.newInstructor, {
+        const response = await axios.post('https://api.nemsu-grading.online/api/users/', this.newInstructor, {
           headers: {
             'Authorization': `Bearer ${token}`  // Include Bearer token in the headers
           }
@@ -428,7 +428,7 @@ export default {
         const token = sessionStorage.getItem('jwt'); // Retrieve token from sessionStorage 
         const payload = this.newInstructor;
         delete payload.password 
-        await axios.put(`http://47.129.3.25:1337/api/users/${this.currentInstructorId}`, this.newInstructor, {
+        await axios.put(`https://api.nemsu-grading.online/api/users/${this.currentInstructorId}`, this.newInstructor, {
           headers: {
             'Authorization': `Bearer ${token}`  // Include Bearer token in the headers
           }
@@ -444,7 +444,7 @@ export default {
   try {
     const token = sessionStorage.getItem('jwt');  
     // Check if the program is already assigned
-    const response = await axios.get(`http://47.129.3.25:1337/api/assigned-programs?filters[instructor_id][$eq]=${this.currentInstructor}`, {
+    const response = await axios.get(`https://api.nemsu-grading.online/api/assigned-programs?filters[instructor_id][$eq]=${this.currentInstructor}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -461,7 +461,7 @@ export default {
     }
 
     // Proceed with assignment if not already assigned
-    await axios.post('http://47.129.3.25:1337/api/assigned-programs', {
+    await axios.post('https://api.nemsu-grading.online/api/assigned-programs', {
       data: {
         instructor_id: this.currentInstructor.toString(),
         program_id: this.selectedProgram.toString()

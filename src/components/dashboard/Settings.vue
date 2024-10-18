@@ -68,7 +68,7 @@ export default {
   },
   methods: {
     async fetchSchoolYears() {
-      const response = await axios.get(`http://47.129.3.25:1337/api/school-years`, {
+      const response = await axios.get(`https://api.nemsu-grading.online/api/school-years`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
         }
@@ -79,7 +79,7 @@ export default {
     async toggleActiveStatus(year) {
       year.attributes.active = !year.attributes.active;
       const updatedYear = { data: { active: year.attributes.active } };
-      await axios.put(`http://47.129.3.25:1337/api/school-years/${year.id}`, updatedYear, {
+      await axios.put(`https://api.nemsu-grading.online/api/school-years/${year.id}`, updatedYear, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
         }
@@ -87,7 +87,7 @@ export default {
     },
     async deleteSchoolYear(id) {
       try {
-        await axios.delete(`http://47.129.3.25:1337/api/school-years/${id}`);
+        await axios.delete(`https://api.nemsu-grading.online/api/school-years/${id}`);
         this.schoolYears = this.schoolYears.filter((year) => year.id !== id);
       } catch (error) {
         console.error('Error deleting school year:', error);
@@ -95,7 +95,7 @@ export default {
     },
     async addSchoolYear() {
       try {
-        const response = await axios.post(`http://47.129.3.25:1337/api/school-years`, {
+        const response = await axios.post(`https://api.nemsu-grading.online/api/school-years`, {
           data: this.newSchoolYear
         }, {
           headers: {
