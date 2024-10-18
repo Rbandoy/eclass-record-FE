@@ -1,28 +1,28 @@
 <template>
   <div class="manage-school-year">
-    <h2>Manage School Years</h2>
-    <button @click="showModal = true">Add School Year</button>
-    <table>
+    <h2 class="text-3xl font-bold text-center mb-6">Manage School Years</h2>
+    <button @click="showModal = true" class="btn-primary mb-4 bg-blue-600">Add School Year</button>
+
+    <table class="table-auto border-collapse border border-gray-300 w-full">
       <thead>
-        <tr>
-          <th>School Year</th>
-          <th>Sem</th>
-          <th>Active Status</th>
+        <tr class="bg-gray-100">
+          <th class="border border-gray-300 px-4 py-2">School Year</th>
+          <th class="border border-gray-300 px-4 py-2">Semester</th>
+          <th class="border border-gray-300 px-4 py-2">Active Status</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="year in schoolYears" :key="year.id">
-          <td>{{ year.attributes.year }}</td>
-          <td>{{ year.attributes.sem }}</td>
-          <td>
+          <td class="border border-gray-300 px-4 py-2">{{ year.attributes.year }}</td>
+          <td class="border border-gray-300 px-4 py-2">{{ year.attributes.sem }}</td>
+          <td class="border border-gray-300 px-4 py-2">
             <input
               type="checkbox"
               :checked="year.attributes.active"
               @change="toggleActiveStatus(year)"
+              class="toggle-checkbox"
             />
-          </td>
-          <td>
-            <button @click="deleteSchoolYear(year.id)">Delete</button>
+            <span>{{ year.attributes.active ? 'Active' : 'Not Active' }}</span>
           </td>
         </tr>
       </tbody>
@@ -31,19 +31,21 @@
     <!-- Modal for Adding School Year -->
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
-        <h3>Add School Year</h3>
+        <h3 class="text-xl font-bold mb-4">Add School Year</h3>
         <form @submit.prevent="addSchoolYear">
           <label for="year">School Year:</label>
-          <input type="text" v-model="newSchoolYear.year" required />
+          <input type="text" v-model="newSchoolYear.year" required class="input-field" />
 
           <label for="sem">Semester:</label>
-          <input type="text" v-model="newSchoolYear.sem" required />
+          <input type="text" v-model="newSchoolYear.sem" required class="input-field" />
 
           <label for="active">Active Status:</label>
           <input type="checkbox" v-model="newSchoolYear.active" />
-
-          <button type="submit">Add School Year</button>
-          <button type="button" @click="showModal = false">Cancel</button>
+          <span>{{ newSchoolYear.active ? 'Active' : 'Not Active' }}</span>
+          <div class="modal-buttons">
+            <button type="submit" class="btn-primary  bg-blue-600">Add School Year</button>
+            <button type="button" @click="showModal = false" class="btn-secondary">Cancel</button>
+          </div>
         </form>
       </div>
     </div>
@@ -58,7 +60,7 @@ export default {
   data() {
     return {
       schoolYears: [],
-      showModal: false, // Control modal visibility
+      showModal: false,
       newSchoolYear: {
         year: '',
         sem: '',
@@ -68,34 +70,25 @@ export default {
   },
   methods: {
     async fetchSchoolYears() {
-      const response = await axios.get(`https://api.nemsu-grading.online/api/school-years`, {
+      const response = await axios.get(`http://localhost:1337/api/school-years`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
         }
       });
-
       this.schoolYears = response.data.data;
     },
     async toggleActiveStatus(year) {
       year.attributes.active = !year.attributes.active;
       const updatedYear = { data: { active: year.attributes.active } };
-      await axios.put(`https://api.nemsu-grading.online/api/school-years/${year.id}`, updatedYear, {
+      await axios.put(`http://localhost:1337/api/school-years/${year.id}`, updatedYear, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
         }
       });
     },
-    async deleteSchoolYear(id) {
-      try {
-        await axios.delete(`https://api.nemsu-grading.online/api/school-years/${id}`);
-        this.schoolYears = this.schoolYears.filter((year) => year.id !== id);
-      } catch (error) {
-        console.error('Error deleting school year:', error);
-      }
-    },
     async addSchoolYear() {
       try {
-        const response = await axios.post(`https://api.nemsu-grading.online/api/school-years`, {
+        const response = await axios.post(`http://localhost:1337/api/school-years`, {
           data: this.newSchoolYear
         }, {
           headers: {
@@ -103,17 +96,16 @@ export default {
           }
         });
 
-        // Add new school year to the list
         this.schoolYears.push(response.data.data);
-        this.newSchoolYear = { year: '', sem: '', active: false }; // Reset the form
-        this.showModal = false; // Close the modal
+        this.newSchoolYear = { year: '', sem: '', active: false };
+        this.showModal = false;
       } catch (error) {
         console.error('Error adding school year:', error);
       }
     }
   },
   created() {
-    this.fetchSchoolYears(); // Fetch school years on component load
+    this.fetchSchoolYears();
   },
 };
 </script>
@@ -123,33 +115,57 @@ export default {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+h2 {
+  color: #333;
 }
 
-th, td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-button {
-  background-color: #ff4b5c;
+.btn-primary { 
   color: white;
+  padding: 10px 20px;
   border: none;
-  padding: 5px 10px;
+  border-radius: 5px;
   cursor: pointer;
-  border-radius: 4px;
+  font-size: 16px;
 }
 
-button:hover {
-  background-color: #ff1c3d;
+.btn-primary:hover {
+  background-color: #45a049;
 }
 
-/* Modal Styles */
+.btn-secondary {
+  background-color: #f44336; /* Red */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-secondary:hover {
+  background-color: #d32f2f;
+}
+
+.table-auto {
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.toggle-checkbox {
+  cursor: pointer;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -165,8 +181,9 @@ button:hover {
 .modal {
   background: white;
   padding: 20px;
-  border-radius: 5px;
-  width: 300px;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .modal label {
@@ -174,9 +191,17 @@ button:hover {
   margin: 10px 0 5px;
 }
 
-.modal input[type="text"] {
+.input-field {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 </style>

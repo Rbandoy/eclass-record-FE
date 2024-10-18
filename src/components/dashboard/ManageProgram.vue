@@ -17,6 +17,7 @@
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Units</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Semester</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">School Year</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Year Level</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Status</th>
             <th v-if="role === 'admin'" class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-sm font-medium text-gray-700 uppercase tracking-wider">Actions</th>
           </tr>
@@ -28,6 +29,7 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.units }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.sem }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.sy }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.year }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ program.attributes.status }}</td>
             <td v-if="role === 'admin'" class="px-6 py-4 whitespace-nowrap text-center">
               <button @click="openEditModal(program)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Edit</button>
@@ -77,7 +79,18 @@
           <div class="mb-4">
             <label for="sy" class="block text-sm font-medium text-gray-700">School Year:</label>
             <select v-model="programForm.sy" id="sy" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
-              <option v-for="schoolYear in schoolYears" :key="schoolYear.id" :value="schoolYear.id">{{ schoolYear.attributes.year }}</option>
+              <option v-for="schoolYear in schoolYears" :key="schoolYear.id" :value="schoolYear.attributes.year">{{ schoolYear.attributes.year }}</option>
+            </select>
+          </div>
+
+          <div class="mb-4">
+            <label for="year" class="block text-sm font-medium text-gray-700">Year Level:</label>
+            <select v-model="programForm.year" id="year" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+              <option value="1">1st year</option>
+              <option value="2">2nd year</option>
+              <option value="3">3rd year</option>
+              <option value="4">4th year</option>
+              <option value="5">5th year</option>
             </select>
           </div>
 
@@ -107,7 +120,8 @@ export default {
         sem: '',
         code: '',
         sy: '',
-        status: ''
+        status: '',
+        year: ''
       }
     };
   },
@@ -115,7 +129,7 @@ export default {
     async fetchPrograms() {
       try {
         const token = sessionStorage.getItem('jwt');
-        const response = await axios.get('https://api.nemsu-grading.online/api/subjects', {
+        const response = await axios.get('http://localhost:1337/api/subjects', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -128,7 +142,7 @@ export default {
     async fetchSchoolYears() {
       try {
         const token = sessionStorage.getItem('jwt');
-        const response = await axios.get('https://api.nemsu-grading.online/api/school-years?filters[active][$eq]=active', {
+        const response = await axios.get('http://localhost:1337/api/school-years?filters[active][$eq]=active', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -142,7 +156,7 @@ export default {
     async createProgram() {
       try {
         const token = sessionStorage.getItem('jwt');
-        await axios.post('https://api.nemsu-grading.online/api/subjects', {data: {...this.programForm}}, {
+        await axios.post('http://localhost:1337/api/subjects', {data: {...this.programForm}}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -166,7 +180,7 @@ export default {
     async updateProgram() {
       try {
         const token = sessionStorage.getItem('jwt');
-        await axios.put(`https://api.nemsu-grading.online/api/subjects/${this.programForm.id}`, {data: {...this.programForm}}, {
+        await axios.put(`http://localhost:1337/api/subjects/${this.programForm.id}`, {data: {...this.programForm}}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -180,7 +194,7 @@ export default {
     async deleteProgram(id) {
       try {
         const token = sessionStorage.getItem('jwt');
-        await axios.delete(`https://api.nemsu-grading.online/api/subjects/${id}`, {
+        await axios.delete(`http://localhost:1337/api/subjects/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
