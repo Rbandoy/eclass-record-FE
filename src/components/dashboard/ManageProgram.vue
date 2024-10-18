@@ -115,7 +115,7 @@ export default {
     async fetchPrograms() {
       try {
         const token = sessionStorage.getItem('jwt');
-        const response = await axios.get('http://localhost:1337/api/subjects', {
+        const response = await axios.get('http://47.129.3.25:1337/api/subjects', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -128,7 +128,7 @@ export default {
     async fetchSchoolYears() {
       try {
         const token = sessionStorage.getItem('jwt');
-        const response = await axios.get('http://localhost:1337/api/school-years?filters[active][$eq]=active', {
+        const response = await axios.get('http://47.129.3.25:1337/api/school-years?filters[active][$eq]=active', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -142,7 +142,7 @@ export default {
     async createProgram() {
       try {
         const token = sessionStorage.getItem('jwt');
-        await axios.post('http://localhost:1337/api/subjects', {data: {...this.programForm}}, {
+        await axios.post('http://47.129.3.25:1337/api/subjects', {data: {...this.programForm}}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -166,7 +166,7 @@ export default {
     async updateProgram() {
       try {
         const token = sessionStorage.getItem('jwt');
-        await axios.put(`http://localhost:1337/api/subjects/${this.programForm.id}`, {data: {...this.programForm}}, {
+        await axios.put(`http://47.129.3.25:1337/api/subjects/${this.programForm.id}`, {data: {...this.programForm}}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -180,7 +180,7 @@ export default {
     async deleteProgram(id) {
       try {
         const token = sessionStorage.getItem('jwt');
-        await axios.delete(`http://localhost:1337/api/subjects/${id}`, {
+        await axios.delete(`http://47.129.3.25:1337/api/subjects/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
