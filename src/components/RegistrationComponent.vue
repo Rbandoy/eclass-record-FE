@@ -1,6 +1,9 @@
 <template>
-  <div class="flex w-full content-center justify-center h-full items-center">
-  <div class="register-container">
+  <div class="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-200 to-indigo-300">
+    <div class="w-full max-w-md p-8 bg-white  shadow-lg ">
+      <img src="@/assets/logo.jpg" alt="Profile Picture" class="w-full h-full border-4 border-white object-cover"/>
+    </div>
+    <div class="register-container">
     <loading-component :isLoading="isLoading" />
     <h2 class="text-center">Register as {{ selectedAccountType }}</h2>
     <form @submit.prevent="register" class="register-form">
