@@ -80,7 +80,7 @@ export default {
     async fetchSchoolYears() {
       try {
         this.isLoading = true;
-        const response = await axios.get(`http://localhost:1337/api/school-years`, {
+        const response = await axios.get(`https://api.nemsu-grading.online/api/school-years`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
         }
@@ -99,7 +99,7 @@ export default {
 
       try {
         this.isLoading = true;
-        await axios.put(`http://localhost:1337/api/school-years/${year.id}`, updatedYear, {
+        await axios.put(`https://api.nemsu-grading.online/api/school-years/${year.id}`, updatedYear, {
           headers: {
             'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
           }
@@ -114,7 +114,7 @@ export default {
     async addSchoolYear() {
       try {
         this.isLoading = true;
-        const response = await axios.post(`http://localhost:1337/api/school-years`, {
+        const response = await axios.post(`https://api.nemsu-grading.online/api/school-years`, {
           data: this.newSchoolYear
         }, {
           headers: {

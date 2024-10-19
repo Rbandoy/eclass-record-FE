@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = "http://localhost:1337/";
+const url = "https://api.nemsu-grading.online/";
 
 const HttpRequest = {
   post: async (endpoint, options, auth = false) => {
