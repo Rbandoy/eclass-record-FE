@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-200 to-indigo-300">
-    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg ">
-    <img src="@/assets/logo.jpg" alt="Profile Picture" class="w-full h-full rounded-full border-4 border-white object-cover"/>
+    <div class="w-full max-w-md p-8 bg-white  shadow-lg ">
+    <img src="@/assets/logo.jpg" alt="Profile Picture" class="w-full h-full border-4 border-white object-cover"/>
   </div>
     <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg ">
       <h2 class="text-4xl font-bold text-center mb-6 text-indigo-700 drop-shadow-md">Welcome Back!</h2>
@@ -41,8 +41,8 @@
           <router-link to="/register" class="text-sm text-indigo-600 hover:underline">Create an Account</router-link>
         </div>
 
-        <div class="mt-4 text-center">
-          <router-link to="/view-grades" class="text-sm text-gray-600 hover:underline">View Grades</router-link>
+        <div class="mt-4 text-center border-t p-2">
+          <router-link to="/view-grades" class="text-sm text-gray-600 hover:underline mt-2">View Grades</router-link>
         </div>
         
         <p v-if="errorMessage" class="mt-4 text-red-600 text-center">{{ errorMessage }}</p>

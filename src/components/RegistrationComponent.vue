@@ -1,5 +1,7 @@
 <template>
+  <div class="flex w-full content-center justify-center h-full items-center">
   <div class="register-container">
+    <loading-component :isLoading="isLoading" />
     <h2 class="text-center">Register as {{ selectedAccountType }}</h2>
     <form @submit.prevent="register" class="register-form">
       <!-- Account Type Toggle -->
@@ -24,7 +26,7 @@
         </label>
       </div>
       <!-- Instructor Fields -->
-      <div v-if="isInstructor">
+      <div class="text-[12px] h-[30rem] px-5 overflow-auto border-b" v-if="isInstructor">
         <div class="mb-4">
           <label for="email">Username</label>
           <input
@@ -118,7 +120,7 @@
       </div>
 
       <!-- Student Fields -->
-      <div v-else> 
+      <div class="text-[12px] h-[30rem] px-5 overflow-auto border-b" v-else> 
           <div class="mb-4">
             <label for="username">Username</label>
             <input
@@ -268,17 +270,22 @@
       </div>
 
       <!-- Submit and Go Back Buttons -->
-      <button type="submit" class="btn">Register</button> 
-      <router-link to="/sign-in" class="btn go-back">Go Back to Sign In</router-link>
+      <button type="submit" class="bg-blue-600 rounded-sm w-full my-2 hover:bg-yellow-300 text-white hover:text-black hover:border items-center justify-center flex h-10 text-center">Register</button> 
+      <router-link to="/sign-in" class="bg-gray-300 w-full rounded-sm items-center hover:bg-gray-600 justify-center flex h-10 text-center">Go Back to Sign In</router-link>
     </form>
   </div>
+</div>
 </template>
 
 <script>
 import { ref, computed } from 'vue'; 
 
 import axios from 'axios'; // Import axios
+import LoadingComponent from './reuseable/LoadingComponent.vue';
+import { toast } from 'vue3-toastify';
+
 export default {
+  components: { LoadingComponent },
   name: 'RegisterComponent',
   setup() {
     const name = ref('');
@@ -315,6 +322,8 @@ export default {
       telegram: ''
     });
 
+    const isLoading = ref(false);
+
     const roles = ref([]); // Fetch or set your roles here
 
     const isInstructor = computed(() => accountType.value === 'instructor');
@@ -322,6 +331,7 @@ export default {
 
     const register = async() => {
       if (isInstructor.value) {
+        isLoading.value = true
         // Logic to handle instructor registration
         const data = {
           email: newInstructor.value.email,
@@ -347,11 +357,16 @@ export default {
             }
           });
 
-          console.log('Instructor registered:', response.data);
+          console.log('Instructor registered:', response);
+          toast.success("Account Registered");
+          // this.$router.push('/signin'); 
           // Handle successful response (e.g., redirect, show success message)
         } catch (error) {
+          toast.error(error.response?.data.error.message);
           console.error('Error registering instructor:', error);
           // Handle error (e.g., show an error message)
+        } finally {
+          isLoading.value = false
         }
       } else {
         const studentData = {
@@ -374,17 +389,23 @@ export default {
         };
 
         try {
+          isLoading.value = true
           const response = await axios.post('http://localhost:1337/api/students', {data: studentData}, {
             headers: {
               'Content-Type': 'application/json'
             }
           });
 
-          console.log('student registered:', response.data);
+          console.log('student registered:', response);
+          toast.success("Account Registered");
+          // this.$router.push('/signin'); 
           // Handle successful response (e.g., redirect, show success message)
         } catch (error) {
+          toast.error(error.response?.data.error.message);
           console.error('Error registering instructor:', error);
           // Handle error (e.g., show an error message)
+        } finally {
+          isLoading.value = false
         }
       }
     };
@@ -406,9 +427,9 @@ export default {
 </script>
 
 <style scoped>
-.register-container {
-  max-width: 600px;
-  margin: 0 auto;
+.register-container { 
+  margin-top: 5rem;
+  width: 30%;
   padding: 20px;
   border: 1px solid #e1e1e1;
   border-radius: 8px;
@@ -418,6 +439,8 @@ export default {
 .register-form {
   display: flex;
   flex-direction: column;
+  padding: 10px;
+  width: 100%;
 }
 h2 {
   margin-bottom: 20px;
@@ -440,5 +463,4 @@ h2 {
 .input-field:focus {
   border-color: #007bff;
  
-outline: none; } .btn { margin-top: 10px; padding: 10px; border: none; border-radius: 4px; background-color: #007bff; color: white; cursor: pointer; transition: background-color 0.3s; } .btn
-{ background-color: #0056b3; } .go-back { margin-top: 10px; text-align: center; } </style>
+outline: none; }   </style>
