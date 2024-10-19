@@ -15,6 +15,8 @@
           <tr>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Code</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Program</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Lecture</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Laboratory</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Units</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Semester</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">School Year</th>
@@ -27,6 +29,8 @@
           <tr v-for="program in programs" :key="program.id" class="border-b border-gray-200 hover:bg-yellow-200">
             <td class="px-6 whitespace-nowrap">{{ program.attributes.code }}</td>
             <td class="px-6 whitespace-nowrap">{{ program.attributes.description }}</td>
+            <td class="px-6 whitespace-nowrap">{{ program.attributes.lecture }}</td>
+            <td class="px-6 whitespace-nowrap">{{ program.attributes.laboratory }}</td>
             <td class="px-6 whitespace-nowrap">{{ program.attributes.units }}</td>
             <td class="px-6  whitespace-nowrap">{{ program.attributes.sem }}</td>
             <td class="px-6 whitespace-nowrap">{{ program.attributes.sy }}</td>
@@ -54,6 +58,16 @@
           <div class="mb-4">
             <label for="description" class="block text-sm font-medium text-gray-700">Description:</label>
             <input type="text" v-model="programForm.description" id="description" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" />
+          </div>
+
+          <div class="mb-4">
+            <label for="lecture" class="block text-sm font-medium text-gray-700">Lecture Units:</label>
+            <input type="text" v-model="programForm.lecture" id="lecture" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" />
+          </div>
+
+          <div class="mb-4">
+            <label for="laboratory" class="block text-sm font-medium text-gray-700">Laboratory Units:</label>
+            <input type="text" v-model="programForm.laboratory" id="laboratory" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" />
           </div>
 
           <div class="mb-4">
@@ -133,7 +147,9 @@ export default {
         code: '',
         sy: '',
         status: '',
-        year: ''
+        year: '',
+        lecture: '',
+        laboratory: ''
       }
     };
   },
@@ -142,7 +158,7 @@ export default {
       try {
         this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
-        const response = await axios.get('https://api.nemsu-grading.online/api/subjects', {
+        const response = await axios.get('http://localhost:1337/api/subjects', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -159,7 +175,7 @@ export default {
       try {
 
         const token = sessionStorage.getItem('jwt');
-        const response = await axios.get('https://api.nemsu-grading.online/api/school-years?filters[active][$eq]=active', {
+        const response = await axios.get('http://localhost:1337/api/school-years?filters[active][$eq]=active', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -175,7 +191,7 @@ export default {
       try {
         this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
-        await axios.post('https://api.nemsu-grading.online/api/subjects', {data: {...this.programForm}}, {
+        await axios.post('http://localhost:1337/api/subjects', {data: {...this.programForm}}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -204,7 +220,7 @@ export default {
       try {
         this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
-        await axios.put(`https://api.nemsu-grading.online/api/subjects/${this.programForm.id}`, {data: {...this.programForm}}, {
+        await axios.put(`http://localhost:1337/api/subjects/${this.programForm.id}`, {data: {...this.programForm}}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -223,7 +239,7 @@ export default {
       try {
         this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
-        await axios.delete(`https://api.nemsu-grading.online/api/subjects/${id}`, {
+        await axios.delete(`http://localhost:1337/api/subjects/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

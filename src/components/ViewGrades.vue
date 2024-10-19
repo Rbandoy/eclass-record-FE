@@ -139,7 +139,7 @@ export default {
       this.isSubmitting = true;
 
       try {
-        const response = await axios.get(`https://api.nemsu-grading.online/api/students?filters[username][$eq]=${this.username}&filters[password][$eq]=${this.password}&filters[activated][$eq]=true`);
+        const response = await axios.get(`http://localhost:1337/api/students?filters[username][$eq]=${this.username}&filters[password][$eq]=${this.password}&filters[activated][$eq]=true`);
         
         const data = response.data.data[0];
        
