@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = "https://nemsu-grading.online/";
+const url = "https://api.nemsu-grading.online/";
 
 const HttpRequest = {
   post: async (endpoint, options, auth = false) => {

@@ -114,7 +114,7 @@ export default {
       // Assuming the search query matches the mock data
       if (this.searchQuery) {
 
-      const evaluateData = await axios.get(`https://nemsu-grading.online/api/evaluation/${this.searchQuery}`, {
+      const evaluateData = await axios.get(`https://api.nemsu-grading.online/api/evaluation/${this.searchQuery}`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem("jwt")}`
         }

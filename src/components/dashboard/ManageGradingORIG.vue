@@ -394,7 +394,7 @@ const addScore = async() => {
         }
       })
       console.log("quizScore", scoreId)
-      await axios.put(`https://nemsu-grading.online/api/grades/${scoreId}`, {
+      await axios.put(`https://api.nemsu-grading.online/api/grades/${scoreId}`, {
       data: {
         ...addScoreParams.value,
       }
@@ -404,7 +404,7 @@ const addScore = async() => {
       }
     });
     } else {
-      await axios.post(`https://nemsu-grading.online/api/grades/`, {
+      await axios.post(`https://api.nemsu-grading.online/api/grades/`, {
       data: {
         ...addScoreParams.value, 
         program_code: programCode.value,
@@ -436,13 +436,13 @@ const fetchStudentGrades = async () => {
   const data = selectedStudent.value
   const token = sessionStorage.getItem('jwt');
   const profileId = JSON.parse(sessionStorage.getItem('profile')).id;
-  const response = await axios.get(`https://nemsu-grading.online/api/quizzes?filters[program_code][$eq]=${programCode.value}&filters[instructor_id][$eq]=${profileId}&populate=*`, {
+  const response = await axios.get(`https://api.nemsu-grading.online/api/quizzes?filters[program_code][$eq]=${programCode.value}&filters[instructor_id][$eq]=${profileId}&populate=*`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
   });
 
-  const response2 = await axios.get(`https://nemsu-grading.online/api/exams?filters[program_code][$eq]=${programCode.value}&filters[instructor_id][$eq]=${profileId}&populate=*`, {
+  const response2 = await axios.get(`https://api.nemsu-grading.online/api/exams?filters[program_code][$eq]=${programCode.value}&filters[instructor_id][$eq]=${profileId}&populate=*`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -453,7 +453,7 @@ const fetchStudentGrades = async () => {
   // Create an array of promises for each quiz
   const quizzesWithScore = response.data.data.map(async quiz => {
     // Fetch the score for each quiz
-    const res = await axios.get(`https://nemsu-grading.online/api/grades?filters[student_id][$eq]=${data.id.toString()}&filters[instructor_id][$eq]=${profileId}&filters[quiz]=${quiz.id}&populate=*`, {
+    const res = await axios.get(`https://api.nemsu-grading.online/api/grades?filters[student_id][$eq]=${data.id.toString()}&filters[instructor_id][$eq]=${profileId}&filters[quiz]=${quiz.id}&populate=*`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -488,7 +488,7 @@ const fetchStudentGrades = async () => {
 const searchProgram = async () => {
   try {
     const token = sessionStorage.getItem('jwt');
-    const response = await axios.get(`https://nemsu-grading.online/api/subjects?filters[code][$eq]=${programCode.value}&populate=*`, {
+    const response = await axios.get(`https://api.nemsu-grading.online/api/subjects?filters[code][$eq]=${programCode.value}&populate=*`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -517,7 +517,7 @@ const fetchStudents = async (programCode) => {
     const token = sessionStorage.getItem('jwt');
     const profile = JSON.parse(sessionStorage.getItem('profile'));
     // Step 1: Fetch gradings data
-    const gradingsResponse = await axios.get(`https://nemsu-grading.online/api/gradings?filters[program_code][$eq]=${programCode}&filters[instructor_id][$eq]=${profile.id}&populate=*`, {
+    const gradingsResponse = await axios.get(`https://api.nemsu-grading.online/api/gradings?filters[program_code][$eq]=${programCode}&filters[instructor_id][$eq]=${profile.id}&populate=*`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -538,7 +538,7 @@ const fetchStudents = async (programCode) => {
 
     // Step 3: Fetch student details
     const studentDetailsRequests = studentIds.map(id =>
-      axios.get(`https://nemsu-grading.online/api/students?filters[student_id][$eq]=${id}&populate=*`, {
+      axios.get(`https://api.nemsu-grading.online/api/students?filters[student_id][$eq]=${id}&populate=*`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -596,7 +596,7 @@ const addQuizToProgram = async () => {
   try {
     const token = sessionStorage.getItem('jwt');
     console.log("program id",currentProgramId.value)
-    await axios.post(`https://nemsu-grading.online/api/quizzes`, {
+    await axios.post(`https://api.nemsu-grading.online/api/quizzes`, {
       data: {
         ...addQuizParams.value,
         instructor_id: JSON.parse(sessionStorage.getItem('profile')).id.toString(),
@@ -618,7 +618,7 @@ const addExamToProgram = async () => {
   console.log(addQuizParams.value)
   try {
     const token = sessionStorage.getItem('jwt');
-    await axios.post(`https://nemsu-grading.online/api/exams`, {
+    await axios.post(`https://api.nemsu-grading.online/api/exams`, {
       data: {
         ...addExamParams.value,
         instructor_id: JSON.parse(sessionStorage.getItem('profile')).id.toString(),
@@ -655,7 +655,7 @@ const addStudentToProgram = async () => {
     }
 
     // Proceed with adding the student to the program if they are not already enrolled
-    await axios.post(`https://nemsu-grading.online/api/gradings`, {
+    await axios.post(`https://api.nemsu-grading.online/api/gradings`, {
       data: {
         student_id: newStudentId.value,
         program_code: programCode.value,
@@ -669,7 +669,7 @@ const addStudentToProgram = async () => {
     });
 
     console.log("eixts",studentExists[1][0].id)
-    await axios.put(`https://nemsu-grading.online/api/users/${profile.id.toString()}`, { 
+    await axios.put(`https://api.nemsu-grading.online/api/users/${profile.id.toString()}`, { 
       data: {
         student: studentExists[1][0].id
       }
@@ -691,7 +691,7 @@ const addStudentToProgram = async () => {
 const checkStudentExists = async (studentId) => {
   try {
     const token = sessionStorage.getItem('jwt');
-    const response = await axios.get(`https://nemsu-grading.online/api/students?filters[student_id][$eq]=${studentId}`, {
+    const response = await axios.get(`https://api.nemsu-grading.online/api/students?filters[student_id][$eq]=${studentId}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -710,7 +710,7 @@ const checkStudentExists = async (studentId) => {
 const checkStudentEnrollment = async (studentId, programCode) => {
   try {
     const token = sessionStorage.getItem('jwt');
-    const response = await axios.get(`https://nemsu-grading.online/api/gradings?filters[student_id][$eq]=${studentId}&filters[program_code][$eq]=${programCode}`, {
+    const response = await axios.get(`https://api.nemsu-grading.online/api/gradings?filters[student_id][$eq]=${studentId}&filters[program_code][$eq]=${programCode}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

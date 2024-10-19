@@ -149,7 +149,7 @@ export default {
     async loadProfile() { 
     try {
        this.isLoading = true
-      const response = await axios.get(`https://nemsu-grading.online/api/users/${this.profileId}`, {
+      const response = await axios.get(`https://api.nemsu-grading.online/api/users/${this.profileId}`, {
         headers: {
           'Authorization': `Bearer ${this.token}`
         }
@@ -202,7 +202,7 @@ export default {
     if (this.profilePic) { 
       formData.append('profilePicture', this.profilePic);
     } 
-    const response = await axios.put(`https://nemsu-grading.online/api/users/${this.profileId}`, formData, {
+    const response = await axios.put(`https://api.nemsu-grading.online/api/users/${this.profileId}`, formData, {
       headers: {
         'Authorization': `Bearer ${this.token}`,
         'Content-Type': 'multipart/form-data'
