@@ -177,7 +177,7 @@ export default {
   methods: {
     async searchStudent() {
       if (this.searchQuery) {
-        const evaluateData = await axios.get(`http://localhost:1337/api/evaluation/${this.searchQuery}`, {
+        const evaluateData = await axios.get(`https://api.nemsu-grading.online/api/evaluation/${this.searchQuery}`, {
           headers: {
             'Authorization': `Bearer ${sessionStorage.getItem("jwt")}`
           }
