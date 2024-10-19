@@ -1,5 +1,6 @@
 <template>
   <div class="container mx-auto p-6">
+    <loading-component :isLoading="isLoading"/>
     <div class="flex flex-row justify-between">
       <h1 class="text-3xl font-bold">Manage Programs</h1>
 
@@ -94,8 +95,15 @@
             </select>
           </div>
 
-          <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">{{ isEditing ? 'Update' : 'Create' }}</button>
-          <button type="button" @click="closeModal" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 ml-2">Cancel</button>
+          <div class="flex justify-end space-x-4 mt-6">
+          <button 
+            type="submit" 
+            class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          >{{ isEditing ? 'Update' : 'Create' }}</button>
+          <button @click="closeModal" type="button" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+            Cancel
+          </button>
+          </div>
         </form>
       </div>
     </div>
@@ -105,11 +113,14 @@
 <script>
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
+import LoadingComponent from '../reuseable/LoadingComponent.vue';
 
 export default {
+  components: { LoadingComponent },
   name: 'ManageProgramComponent',
   data() {
     return {
+      isLoading: false,
       role: '',
       programs: [],
       schoolYears: [],
@@ -129,6 +140,7 @@ export default {
   methods: {
     async fetchPrograms() {
       try {
+        this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
         const response = await axios.get('http://localhost:1337/api/subjects', {
           headers: {
@@ -139,10 +151,13 @@ export default {
       } catch (error) {
         toast.error(error.response.data.error.message);
         console.error('Error fetching programs:', error);
+      } finally {
+        this.isLoading = false
       }
     },
     async fetchSchoolYears() {
       try {
+
         const token = sessionStorage.getItem('jwt');
         const response = await axios.get('http://localhost:1337/api/school-years?filters[active][$eq]=active', {
           headers: {
@@ -158,6 +173,7 @@ export default {
     
     async createProgram() {
       try {
+        this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
         await axios.post('http://localhost:1337/api/subjects', {data: {...this.programForm}}, {
           headers: {
@@ -170,6 +186,8 @@ export default {
       } catch (error) {
         toast.error(error.response.data.error.message);
         console.error('Error creating program:', error);
+      }finally {
+        this.isLoading = false
       }
     },
     openCreateModal() {
@@ -184,6 +202,7 @@ export default {
     },
     async updateProgram() {
       try {
+        this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
         await axios.put(`http://localhost:1337/api/subjects/${this.programForm.id}`, {data: {...this.programForm}}, {
           headers: {
@@ -196,10 +215,13 @@ export default {
       } catch (error) {
         toast.error(error.response.data.error.message);
         console.error('Error updating program:', error);
+      }finally {
+        this.isLoading = false
       }
     },
     async deleteProgram(id) {
       try {
+        this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
         await axios.delete(`http://localhost:1337/api/subjects/${id}`, {
           headers: {
@@ -211,6 +233,8 @@ export default {
       } catch (error) {
         toast.error(error.response.data.error.message);
         console.error('Error deleting program:', error);
+      }finally {
+        this.isLoading = false
       }
     },
     closeModal() {

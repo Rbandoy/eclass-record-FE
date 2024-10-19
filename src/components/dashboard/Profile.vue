@@ -1,15 +1,16 @@
 <template>
   <div class="container mx-auto p-6">
+    <loading-component :isLoading="isLoading" />
     <!-- Profile Header -->
     <div class="bg-blue-500 h-32 rounded-lg mb-6 relative">
-      <img :src="headerImage" alt="Header Image" class="w-full h-full object-cover rounded-t-lg"/>
+      <!-- <img src="@/assets/logo.jpg" alt="Header Image" class="w-full h-full object-cover rounded-t-lg"/> -->
       <div class="absolute bottom-0 left-0 right-0 flex justify-center items-end pb-4">
-        <img :src="profile.profilePicture" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-white object-cover"/>
+        <img src="@/assets/logo.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-white object-cover"/>
       </div>
     </div>
 
     <!-- Profile Info -->
-    <div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="bg-white p-6 rounded-lg shadow-md text-[12px]">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-2xl font-bold">Profile</h2>
         <button @click="toggleEdit" class="bg-indigo-500 text-white px-4 py-2 rounded-md">
@@ -21,12 +22,12 @@
         <!-- Profile Picture Upload Field -->
         
 
-        <div class="flex flex-col">
+        <!-- <div class="flex flex-col">
           <label for="profile" class="text-sm font-medium text-gray-700">Profile:</label>
           <input type="text" id="username" class="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
           @change="handleFileUpload"
           v-model="profile.profilePicture" :disabled="!isEditing" />
-        </div>
+        </div> -->
 
         <div class="flex flex-col">
           <label for="username" class="text-sm font-medium text-gray-700">Username:</label>
@@ -102,11 +103,14 @@
 </template>
 <script>
 import axios from 'axios';
+import LoadingComponent from '../reuseable/LoadingComponent.vue';
 
 export default {
+  components: { LoadingComponent },
   name: 'ProfileComponent',
   data() {
     return {
+      isLoading: false,
       profileId: '',
       token: '',
       profile: {
@@ -129,7 +133,7 @@ export default {
       originalProfile: {},  // To store the original profile data
       isEditing: false,
       profilePic: 'https://via.placeholder.com/100?text=Profile+Pic',  // Default placeholder image
-      headerImage: 'https://via.placeholder.com/1500x200?text=Header+Image',  // Default header image
+      headerImage: '@assets/logo.jpg',  // Default header image
       file: null
     };
   },
@@ -137,15 +141,14 @@ export default {
     const profileData = JSON.parse(sessionStorage.getItem('profile'));
     this.profileId = profileData.id;
     this.token = sessionStorage.getItem('jwt');  
-    setTimeout(() => {
-      this.loadProfile();
-    }, 2000);
+    
+      this.loadProfile(); 
     
   },
   methods: {
     async loadProfile() { 
     try {
-       
+       this.isLoading = true
       const response = await axios.get(`http://localhost:1337/api/users/${this.profileId}`, {
         headers: {
           'Authorization': `Bearer ${this.token}`
@@ -163,7 +166,9 @@ export default {
     } catch (error) {
       console.error('Error loading profile:', error);
       alert('Error loading profile.');
-    } 
+    } finally {
+      this.isLoading = false
+    }
     },
     toggleEdit() {
       if (this.isEditing) {
@@ -181,6 +186,7 @@ export default {
     },
     async updateProfile() {
   try {
+    this.isLoading = true;
     // Retrieve token from sessionStorage
     const formData = new FormData();
 
@@ -216,7 +222,9 @@ export default {
     // Revert to original profile data if there's an error
     this.profile = { ...this.originalProfile };
     alert('Error updating profile. Changes reverted.');
-  }
+  } finally {
+      this.isLoading = false
+    }
 }
   }
 }

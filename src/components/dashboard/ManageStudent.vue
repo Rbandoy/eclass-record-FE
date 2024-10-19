@@ -1,5 +1,6 @@
 <template>
   <div class="container mx-auto p-6">
+    <LoadingComponent :isLoading="isLoading"/>
     <!-- Header -->
     <div class="mb-6 flex flex-row justify-between">
       <h1 class="text-3xl font-bold">Manage Students</h1>
@@ -70,91 +71,121 @@
     <div v-else class="text-gray-500">No students available.</div>
 
     <!-- Add/Edit Student Modal -->
-    <transition name="fade">
-      <div v-if="isModalOpen" class="fixed inset-0 flex items-center p-2 justify-center bg-gray-800 bg-opacity-50 overflow-auto text-[12px]">
-        <div class="bg-white p-6 mt-10 rounded-lg shadow-lg max-w-md h-auto w-full">
-          <h2 class="text-2xl font-semibold mb-4">{{ isEditing ? 'Edit Student' : 'Add New Student' }}</h2>
-          <form @submit.prevent="isEditing ? updateStudent() : createStudent()">
-            <!-- Form Fields -->
-            <div class="mb-4">
-              <label for="student_id" class="block text-sm font-medium text-gray-700">Student ID:</label>
-              <input type="text" id="student_id" v-model="studentForm.student_id" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" :disabled="isEdit"/>
-            </div>
-            <div class="mb-4">
-              <label for="fname" class="block text-sm font-medium text-gray-700">User Name:</label>
-              <input type="text" id="username" v-model="studentForm.username" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
-            </div>
-            <div class="mb-4">
-              <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
-              <input type="text" id="password" v-model="studentForm.password" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
-            </div>
-            <div class="mb-4">
-              <label for="fname" class="block text-sm font-medium text-gray-700">First Name:</label>
-              <input type="text" id="fname" v-model="studentForm.fname" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
-            </div>
-            <div class="mb-4">
-              <label for="mname" class="block text-sm font-medium text-gray-700">Middle Name:</label>
-              <input type="text" id="mname" v-model="studentForm.mname" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
-            </div>
-            <div class="mb-4">
-              <label for="lname" class="block text-sm font-medium text-gray-700">Last Name:</label>
-              <input type="text" id="lname" v-model="studentForm.lname" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
-            </div>
-            <div class="mb-4">
-              <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
-              <input type="email" id="email" v-model="studentForm.email" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
-            </div>
-            <div class="mb-4">
-              <label for="bdate" class="block text-sm font-medium text-gray-700">Birthdate:</label>
-              <input type="date" id="bdate" v-model="studentForm.bdate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
-            </div>
-            <div class="mb-4">
-              <label for="mobile" class="block text-sm font-medium text-gray-700">Mobile:</label>
-              <input type="text" id="mobile" v-model="studentForm.mobile" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
-            </div>
-            <div class="mb-4">
-              <label for="address" class="block text-sm font-medium text-gray-700">Address:</label>
-              <input type="text" id="address" v-model="studentForm.address" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
-            </div>
-            <div class="mb-4">
-              <label for="gender" class="block text-sm font-medium text-gray-700">Gender:</label>
-              <select id="gender" v-model="studentForm.gender" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div class="mb-4">
-              <label for="status" class="block text-sm font-medium text-gray-700">Status:</label>
-              <select id="status" v-model="studentForm.status" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                <option value="Regular">Regular</option>
-                <option value="Irregular">Irregular</option> 
-              </select>
-            </div>
-            <div class="mb-4">
-              <label for="status" class="block text-sm font-medium text-gray-700">Activated:</label>
-              <select id="status" v-model="studentForm.activated" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                <option value="true">True</option>
-                <option value="false">False</option> 
-              </select>
-            </div>
-            <div class="mb-4">
-              <label for="address" class="block text-sm font-medium text-gray-700">Guardian Telegram:</label>
-              <input type="text" id="address" v-model="studentForm.telegram" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"/>
-            </div>
-            <!-- ... (same as before) ... -->
-            <div class="flex justify-end">
-              <button @click="closeModal" type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md mr-2">
-                Cancel
-              </button>
-              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">
-                {{ isEditing ? 'Update' : 'Add' }}
-              </button>
-            </div>
-          </form>
+<transition name="fade">
+  <div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-60 overflow-auto pt-10 text-sm">
+    <div class="bg-white mt-4 p-8 rounded-lg shadow-2xl h-[90%] max-w-lg w-full space-y-6">
+      <h2 class="text-2xl font-bold text-gray-800">{{ isEditing ? 'Edit Student' : 'Add New Student' }}</h2>
+      
+      <form class="overflow-auto h-[90%] p-3" @submit.prevent="isEditing ? updateStudent() : createStudent()">
+        <!-- Student ID -->
+        <div class="space-y-1">
+          <label for="student_id" class="block text-base font-semibold text-gray-700">Student ID</label>
+          <input type="text" id="student_id" v-model="studentForm.student_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500" :disabled="isEdit"/>
         </div>
-      </div>
-    </transition>
+
+        <!-- Username -->
+        <div class="space-y-1">
+          <label for="username" class="block text-base font-semibold text-gray-700">Username</label>
+          <input type="text" id="username" v-model="studentForm.username" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"/>
+        </div>
+
+        <!-- Password -->
+        <div class="space-y-1">
+          <label for="password" class="block text-base font-semibold text-gray-700">Password</label>
+          <input type="password" id="password" v-model="studentForm.password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"/>
+        </div>
+
+        <!-- First Name -->
+        <div class="space-y-1">
+          <label for="fname" class="block text-base font-semibold text-gray-700">First Name</label>
+          <input type="text" id="fname" v-model="studentForm.fname" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"/>
+        </div>
+
+        <!-- Middle Name -->
+        <div class="space-y-1">
+          <label for="mname" class="block text-base font-semibold text-gray-700">Middle Name</label>
+          <input type="text" id="mname" v-model="studentForm.mname" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"/>
+        </div>
+
+        <!-- Last Name -->
+        <div class="space-y-1">
+          <label for="lname" class="block text-base font-semibold text-gray-700">Last Name</label>
+          <input type="text" id="lname" v-model="studentForm.lname" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"/>
+        </div>
+
+        <!-- Email -->
+        <div class="space-y-1">
+          <label for="email" class="block text-base font-semibold text-gray-700">Email</label>
+          <input type="email" id="email" v-model="studentForm.email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"/>
+        </div>
+
+        <!-- Birthdate -->
+        <div class="space-y-1">
+          <label for="bdate" class="block text-base font-semibold text-gray-700">Birthdate</label>
+          <input type="date" id="bdate" v-model="studentForm.bdate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"/>
+        </div>
+
+        <!-- Mobile -->
+        <div class="space-y-1">
+          <label for="mobile" class="block text-base font-semibold text-gray-700">Mobile</label>
+          <input type="text" id="mobile" v-model="studentForm.mobile" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"/>
+        </div>
+
+        <!-- Address -->
+        <div class="space-y-1">
+          <label for="address" class="block text-base font-semibold text-gray-700">Address</label>
+          <input type="text" id="address" v-model="studentForm.address" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"/>
+        </div>
+
+        <!-- Gender -->
+        <div class="space-y-1">
+          <label for="gender" class="block text-base font-semibold text-gray-700">Gender</label>
+          <select id="gender" v-model="studentForm.gender" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Status -->
+        <div class="space-y-1">
+          <label for="status" class="block text-base font-semibold text-gray-700">Status</label>
+          <select id="status" v-model="studentForm.status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500">
+            <option value="Regular">Regular</option>
+            <option value="Irregular">Irregular</option>
+          </select>
+        </div>
+
+        <!-- Activation -->
+        <div class="space-y-1">
+          <label for="activated" class="block text-base font-semibold text-gray-700">Activated</label>
+          <select id="activated" v-model="studentForm.activated" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500">
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        </div>
+
+        <!-- Guardian Telegram -->
+        <div class="space-y-1">
+          <label for="telegram" class="block text-base font-semibold text-gray-700">Guardian Telegram</label>
+          <input type="text" id="telegram" v-model="studentForm.telegram" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"/>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-3 mt-6">
+          
+          <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+            {{ isEditing ? 'Update' : 'Create' }}
+          </button>
+          <button @click="closeModal" type="button" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</transition>
+
 
 
     <!-- View Grades Modal -->
@@ -194,6 +225,7 @@
 </template>
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import LoadingComponent from '../reuseable/LoadingComponent.vue';
 import axios from 'axios'; 
 const isGradesModalOpen = ref();
 const students = ref([]);
@@ -201,6 +233,7 @@ const isModalOpen = ref(false);
 const isEditing = ref(false);
 const role = ref('')
 const grades = ref();
+const isLoading = ref(false);
 const studentForm = ref({
   id: '',
   student_id: '',
@@ -224,6 +257,7 @@ const searchQuery = ref('');
 // Fetch students from API
 const loadStudents = async () => {
   try {
+    isLoading.value = true
     const token = sessionStorage.getItem('jwt');
     const response = await axios.get('http://localhost:1337/api/students', {
       headers: {
@@ -233,12 +267,15 @@ const loadStudents = async () => {
     students.value = response.data.data; // Adjust based on the actual response structure
   } catch (error) {
     console.error('Error fetching students:', error);
+  } finally {
+    isLoading.value = false
   }
 };
 
 // Add new student
 const createStudent = async () => {
   try {
+    isLoading.value = true
     const token = sessionStorage.getItem('jwt');
     await axios.post('http://localhost:1337/api/students', { data: studentForm.value }, {
       headers: {
@@ -252,12 +289,15 @@ const createStudent = async () => {
       alert('Error creating student: Student already exists');
     }
     console.error('Error creating student:', error);
+  } finally {
+    isLoading.value = false
   }
 };
 
 // Update student
 const updateStudent = async () => {
   try {
+    isLoading.value = true
     const token = sessionStorage.getItem('jwt');
     await axios.put(`http://localhost:1337/api/students/${currentStudentId.value}`, { data: studentForm.value }, {
       headers: {
@@ -268,12 +308,15 @@ const updateStudent = async () => {
     closeModal();
   } catch (error) {
     console.error('Error updating student:', error);
+  } finally {
+    isLoading.value = false
   }
 };
 
 // Delete student
 const deleteStudent = async (id) => {
   try {
+    isLoading.value = true
     const token = sessionStorage.getItem('jwt');
     await axios.delete(`http://localhost:1337/api/students/${id}`, {
       headers: {
@@ -283,6 +326,9 @@ const deleteStudent = async (id) => {
     loadStudents();
   } catch (error) {
     console.error('Error deleting student:', error);
+  } 
+  finally {
+    isLoading.value = false
   }
 };
 
@@ -341,12 +387,15 @@ const filteredStudents = computed(() => {
 
 const viewGrades = async (student) => {
   try {
+    isLoading.value = true
     // const response = await axios.get(`/api/grades?id=${student.id}`);
     grades.value = student.grades; // Assuming grades are in response.data
     currentStudentId.value = student.id;
     isGradesModalOpen.value = true; // Open grades modal
   } catch (error) {
     console.error('Error fetching grades:', error);
+  } finally {
+    isLoading.value = false
   }
 };
 

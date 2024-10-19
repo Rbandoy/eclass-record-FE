@@ -1,5 +1,6 @@
 <template>
   <div class="manage-school-year">
+    <loading-component :isLoading="isLoading"/>
     <h2 class="text-3xl font-bold text-center mb-6">Manage School Years</h2>
     <button @click="showModal = true" class="btn-primary mb-4 bg-blue-600 text-[12px]">Add School Year</button>
 
@@ -45,7 +46,9 @@
           <span class="ml-2">{{ newSchoolYear.active ? 'Active' : 'Not Active' }}</span>
           <div class="modal-buttons">
             <button type="submit" class="btn-primary  bg-blue-600">Add School Year</button>
-            <button type="button" @click="showModal = false" class="btn-secondary text-[12px]">Cancel</button>
+            <button @click="showModal = false" type="button" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+              Cancel
+            </button>
           </div>
         </form>
       </div>
@@ -55,12 +58,15 @@
 
 <script>
 import axios from 'axios';
-import { toast } from 'vue3-toastify';
+import { toast } from 'vue3-toastify'; 
+import LoadingComponent from '../reuseable/LoadingComponent.vue';
 
 export default {
+  components: { LoadingComponent },
   name: "SchoolYearComponent",
   data() {
     return {
+      isLoading: false,
       schoolYears: [],
       showModal: false,
       newSchoolYear: {
@@ -72,32 +78,42 @@ export default {
   },
   methods: {
     async fetchSchoolYears() {
-      const response = await axios.get(`http://localhost:1337/api/school-years`, {
+      try {
+        this.isLoading = true;
+        const response = await axios.get(`http://localhost:1337/api/school-years`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
         }
-      });
-      this.schoolYears = response.data.data;
+        });
+        this.schoolYears = response.data.data;
+      } catch (error) {
+        toast.error(error.response.data.error.message)
+      } finally {
+        this.isLoading = false
+      }
+      
     },
     async toggleActiveStatus(year) {
       year.attributes.active = !year.attributes.active;
       const updatedYear = { data: { active: year.attributes.active } };
 
       try {
+        this.isLoading = true;
         await axios.put(`http://localhost:1337/api/school-years/${year.id}`, updatedYear, {
-        headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
-        }
+          headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
+          }
         });
         toast.success(`School Year ${year.attributes.year} ${year.attributes.active == true ? "Activated": "Disabled"} `)
       } catch (error) {
         toast.error(error.response.data.error.message);
+      } finally {
+        this.isLoading = false;
       }
-      
-      
     },
     async addSchoolYear() {
       try {
+        this.isLoading = true;
         const response = await axios.post(`http://localhost:1337/api/school-years`, {
           data: this.newSchoolYear
         }, {
@@ -109,7 +125,10 @@ export default {
         this.schoolYears.push(response.data.data);
         this.newSchoolYear = { year: '', sem: '', active: false };
         this.showModal = false;
+        this.isLoading = false;
+        toast.success('School Year Added Successfully');
       } catch (error) {
+        toast.error(error.response.data.error.message)
         console.error('Error adding school year:', error);
       }
     }

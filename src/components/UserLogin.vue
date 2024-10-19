@@ -1,41 +1,50 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
-      <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
+  <div class="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-200 to-indigo-300">
+    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg ">
+    <img src="@/assets/logo.jpg" alt="Profile Picture" class="w-full h-full rounded-full border-4 border-white object-cover"/>
+  </div>
+    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg ">
+      <h2 class="text-4xl font-bold text-center mb-6 text-indigo-700 drop-shadow-md">Welcome Back!</h2>
+      <p class="text-center text-gray-600 mb-8">Please sign in to your account</p>
       <form v-if="!grades" @submit.prevent="UserLogin">
         <div class="mb-6">
-          <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+          <label for="username" class="block text-sm font-semibold text-gray-800">Username</label>
           <input 
             v-model="username" 
             id="username" 
             placeholder="Enter your username"
-            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150"
           />
         </div>
 
         <div class="mb-6">
-          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <label for="password" class="block text-sm font-semibold text-gray-800">Password</label>
           <input 
             v-model="password" 
             id="password" 
             type="password" 
             placeholder="Enter your password"
-            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150"
           />
         </div>
 
         <Button 
           type="submit" 
-          class="w-full bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150"
+          class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 font-semibold shadow-lg"
           :disabled="isSubmitting"
         >
           <span v-if="isSubmitting">Logging in...</span>
           <span v-else>Login</span>
         </Button>
 
-        <router-link to="/register" class="block text-center text-indigo-600 mt-4 hover:underline">Create an Account</router-link>
+        <div class="mt-6 text-center">
+          <router-link to="/register" class="text-sm text-indigo-600 hover:underline">Create an Account</router-link>
+        </div>
 
-        <router-link to="/view-grades" class="block text-center text-gray-600 mt-4 hover:underline">View Grades</router-link>
+        <div class="mt-4 text-center">
+          <router-link to="/view-grades" class="text-sm text-gray-600 hover:underline">View Grades</router-link>
+        </div>
+        
         <p v-if="errorMessage" class="mt-4 text-red-600 text-center">{{ errorMessage }}</p>
       </form>
     </div>
@@ -61,15 +70,11 @@ export default {
   methods: {
     async UserLogin() {
       this.isSubmitting = true;
-      console.log('Username:', this.username);  
-      console.log('Password:', this.password);  
-
       try {
         const response = await axios.post('http://localhost:1337/api/auth/local?populate[user_permission]=*', {
           identifier: this.username,
           password: this.password,
         });
-
 
         const { jwt } = response.data;
 
@@ -83,22 +88,20 @@ export default {
           }
         };
 
-        const user = await axios.request(config)
+        const user = await axios.request(config);
 
-        console.log(response)
         if (user.data.activated == false || user.data.activated == null) {
-          alert("Users account not yet activated")
-          return
+          alert("User's account not yet activated");
+          return;
         }
-        // Save JWT token to session storage
+
         sessionStorage.setItem('jwt', jwt);
         sessionStorage.setItem('role', user.data.role.type);
         sessionStorage.setItem('profile', JSON.stringify(user.data));
-        // Redirect to another page or notify the user
+
         this.$router.push('/dashboard'); 
       } catch (error) {
         this.errorMessage = 'Login failed. Please try again.';
-        console.log(error);
       } finally {
         this.isSubmitting = false;
       }
@@ -108,5 +111,23 @@ export default {
 </script>
 
 <style scoped>
-/* Custom styles, if any, can be added here */
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+h2 {
+  letter-spacing: 1.5px;
+}
+
+input {
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+ 
+button {
+  letter-spacing: 0.5px;
+}
+
+a {
+  font-weight: 500;
+}
 </style>

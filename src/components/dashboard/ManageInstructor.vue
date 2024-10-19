@@ -14,149 +14,171 @@
     <!-- Modal for creating or updating an instructor -->
     <div 
       v-if="isModalOpen" 
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-60 overflow-auto pt-10 text-sm"
       @click="closeModal"
     >
       <div 
-        class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6 relative" 
+        class="bg-white mt-4 p-8 rounded-lg shadow-2xl h-[90%] max-w-lg w-full space-y-6" 
         @click.stop
       >
-        <h2 class="text-2xl font-semibold mb-4">
-          {{ isEditing ? 'Update Account' : 'Add New Account' }}
-        </h2>
+      <h2 class="text-3xl font-semibold text-gray-800 mb-6 shadow-sm">
+        {{ isEditing ? 'Update Account' : 'Add New Account' }}
+      </h2>
+
         <!-- Add or Update Instructor Form -->
-<form class="text-[12px] text-nowrap" @submit.prevent="isEditing ? updateInstructor() : createInstructor()">
-  <div class="mb-4">
-    <label for="username" class="block text-[12px] text-nowrap font-medium text-gray-700">Username</label>
-    <input
-      v-model="newInstructor.username"
-      id="username"
-      type="text"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-      required
-    />
-  </div>
-  <div v-if="!isEditing" class="mb-4">
-    <label for="password" class="block text-[12px] text-nowrap font-medium text-gray-700">Password</label>
-    <input
-      v-model="newInstructor.password"
-      id="password"
-      type="password"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-      required
-    />
-  </div>
-  <div class="mb-4">
-    <label for="fname" class="block text-[12px] text-nowrap font-medium text-gray-700">First Name</label>
-    <input
-      v-model="newInstructor.fname"
-      id="fname"
-      type="text"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-      required
-    />
-  </div>
-  <div class="mb-4">
-    <label for="lname" class="block text-[12px] text-nowrap font-medium text-gray-700">Last Name</label>
-    <input
-      v-model="newInstructor.lname"
-      id="lname"
-      type="text"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-      required
-    />
-  </div>
-  <div class="mb-4">
-    <label for="email" class="block text-[12px] text-nowrap font-medium text-gray-700">Email</label>
-    <input
-      v-model="newInstructor.email"
-      id="email"
-      type="email"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-      required
-    />
-  </div>
-  <div class="mb-4">
-    <label for="address" class="block text-[12px] text-nowrap font-medium text-gray-700">Address</label>
-    <input
-      v-model="newInstructor.address"
-      id="address"
-      type="text"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-    />
-  </div>
-  <div class="mb-4">
-    <label for="bdate" class="block text-[12px] text-nowrap font-medium text-gray-700">Birth Date</label>
-    <input
-      v-model="newInstructor.bdate"
-      id="bdate"
-      type="date"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-    />
-  </div>
-  <div class="mb-4">
-    <label for="role" class="block text-[12px] text-nowrap font-medium text-gray-700">Role</label>
-    <select
-      v-model="newInstructor.role"
-      id="role"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-      required
-    >
-      <option v-for="role in roles" :key="role.id" :value="role.id">
-        {{ role.name }}
-      </option>
-    </select>
-  </div>
-  <div class="mb-4">
-    <label for="gender" class="block text-[12px] text-nowrap font-medium text-gray-700">Gender</label>
-    <select
-      v-model="newInstructor.gender"
-      id="gender"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-      required
-    >
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
-      <option value="Other">Other</option>
-    </select>
-  </div>
-  <div class="mb-4">
-    <label for="phone_no" class="block text-[12px] text-nowrap font-medium text-gray-700">Phone Number</label>
-    <input
-      v-model="newInstructor.phone_no"
-      id="phone_no"
-      type="tel"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-    />
-  </div>
-  <div class="mb-4">
-    <label for="gender" class="block text-[12px] text-nowrap font-medium text-gray-700">Activate</label>
-    <select
-      v-model="newInstructor.activated"
-      id="activates"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-      required
-    >
-      <option value="true">True</option>
-      <option value="false">False</option>
-    </select>
-  </div>
-  <div class="flex justify-end mt-6 space-x-4">
-    <button 
-      type="submit" 
-      class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-    >
-      {{ isEditing ? 'Update Instructor' : 'Add Instructor' }}
-    </button>
-    <button 
-      type="button" 
-      @click="closeModal" 
-      class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition"
-    >
-      Cancel
-    </button>
-  </div>
-</form> 
+        <form class="space-y-4 overflow-auto h-[90%] p-3" @submit.prevent="isEditing ? updateInstructor() : createInstructor()">
+          <!-- Username -->
+          <div>
+            <label for="username" class="block text-base font-medium text-gray-700">Username</label>
+            <input
+              v-model="newInstructor.username"
+              id="username"
+              type="text"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          <!-- Password (Only for Add) -->
+          <div v-if="!isEditing">
+            <label for="password" class="block text-base font-medium text-gray-700">Password</label>
+            <input
+              v-model="newInstructor.password"
+              id="password"
+              type="password"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          <!-- First Name -->
+          <div>
+            <label for="fname" class="block text-base font-medium text-gray-700">First Name</label>
+            <input
+              v-model="newInstructor.fname"
+              id="fname"
+              type="text"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          <!-- Last Name -->
+          <div>
+            <label for="lname" class="block text-base font-medium text-gray-700">Last Name</label>
+            <input
+              v-model="newInstructor.lname"
+              id="lname"
+              type="text"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label for="email" class="block text-base font-medium text-gray-700">Email</label>
+            <input
+              v-model="newInstructor.email"
+              id="email"
+              type="email"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          <!-- Address -->
+          <div>
+            <label for="address" class="block text-base font-medium text-gray-700">Address</label>
+            <input
+              v-model="newInstructor.address"
+              id="address"
+              type="text"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+            />
+          </div>
+
+          <!-- Birth Date -->
+          <div>
+            <label for="bdate" class="block text-base font-medium text-gray-700">Birth Date</label>
+            <input
+              v-model="newInstructor.bdate"
+              id="bdate"
+              type="date"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+            />
+          </div>
+
+          <!-- Role -->
+          <div>
+            <label for="role" class="block text-base font-medium text-gray-700">Role</label>
+            <select
+              v-model="newInstructor.role"
+              id="role"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
+            >
+              <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.name }}</option>
+            </select>
+          </div>
+
+          <!-- Gender -->
+          <div>
+            <label for="gender" class="block text-base font-medium text-gray-700">Gender</label>
+            <select
+              v-model="newInstructor.gender"
+              id="gender"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
+            >
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- Phone Number -->
+          <div>
+            <label for="phone_no" class="block text-base font-medium text-gray-700">Phone Number</label>
+            <input
+              v-model="newInstructor.phone_no"
+              id="phone_no"
+              type="tel"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+            />
+          </div>
+
+          <!-- Activate -->
+          <div>
+            <label for="activated" class="block text-base font-medium text-gray-700">Activate</label>
+            <select
+              v-model="newInstructor.activated"
+              id="activated"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
+            >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex justify-end space-x-4 mt-6">
+            <button 
+              type="submit" 
+              class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            >
+              {{ isEditing ? 'Update' : 'Create' }}
+            </button>
+            <button 
+              type="button" 
+              @click="closeModal" 
+              class="px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </form> 
       </div>
     </div>
 
