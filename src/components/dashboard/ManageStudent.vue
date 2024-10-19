@@ -259,7 +259,7 @@ const loadStudents = async () => {
   try {
     isLoading.value = true
     const token = sessionStorage.getItem('jwt');
-    const response = await axios.get('https://api.nemsu-grading.online/api/students', {
+    const response = await axios.get('http://localhost:1337/api/students', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -277,7 +277,7 @@ const createStudent = async () => {
   try {
     isLoading.value = true
     const token = sessionStorage.getItem('jwt');
-    await axios.post('https://api.nemsu-grading.online/api/students', { data: studentForm.value }, {
+    await axios.post('http://localhost:1337/api/students', { data: studentForm.value }, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -299,7 +299,7 @@ const updateStudent = async () => {
   try {
     isLoading.value = true
     const token = sessionStorage.getItem('jwt');
-    await axios.put(`https://api.nemsu-grading.online/api/students/${currentStudentId.value}`, { data: studentForm.value }, {
+    await axios.put(`http://localhost:1337/api/students/${currentStudentId.value}`, { data: studentForm.value }, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -318,7 +318,7 @@ const deleteStudent = async (id) => {
   try {
     isLoading.value = true
     const token = sessionStorage.getItem('jwt');
-    await axios.delete(`https://api.nemsu-grading.online/api/students/${id}`, {
+    await axios.delete(`http://localhost:1337/api/students/${id}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

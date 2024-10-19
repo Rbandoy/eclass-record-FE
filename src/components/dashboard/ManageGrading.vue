@@ -15,6 +15,7 @@
     <button @click="exportToExcel" class="export-button ">Export to Excel</button>
     <button @click="openRenameModal" class="save-button ">Save Changes</button>
     <button @click="submitToAdmin" class="save-button">Submit Grades</button>
+    <button @click="deleteFile" v-if="selectedFile?.id" class="save-button">Delete File</button>
     
 
     <div v-if="isRenameModalVisible" class="rename-modal">
@@ -132,7 +133,7 @@ export default defineComponent({
         const config = {
           method: 'get',
           maxBodyLength: Infinity,
-          url: 'https://api.nemsu-grading.online/api/upload/files/'
+          url: 'http://localhost:1337/api/upload/files/'
         };
         const response = await axios.request(config);
         files.value = response.data.reduce((acc, cur) => {
@@ -156,7 +157,7 @@ export default defineComponent({
         try {
           console.log(selectedFile.value)
           loading.value = true; // Start loading
-          const response = await fetch(`https://api.nemsu-grading.online${selectedFile.value.url}`);
+          const response = await fetch(`http://localhost:1337${selectedFile.value.url}`);
           if (!response.ok) throw new Error('Network response was not ok');
 
           const arrayBuffer = await response.arrayBuffer();
@@ -177,7 +178,15 @@ export default defineComponent({
           }
         } catch (error) {
           console.error('Error loading file:', error);
-        }
+  
+          const hotInstance = hotTableRef.value.hotInstance;
+          if (hotInstance) {
+            hotInstance.loadData([]);
+            hotInstance.updateSettings({ cells: hotSettings.value.cells });
+            loading.value = false; // Start loading
+          } 
+          loading.value = false 
+      }
       }
     };
 
@@ -185,7 +194,7 @@ export default defineComponent({
       let config = {
           method: 'get',
           maxBodyLength: Infinity,
-          url: 'https://api.nemsu-grading.online/api/school-years?filters[active][$eq]=active',
+          url: 'http://localhost:1337/api/school-years?filters[active][$eq]=active',
           headers: { 
             'Content-Type': 'application/json', 
             'Authorization': `Bearer ${sessionStorage.getItem("jwt")}`
@@ -275,7 +284,7 @@ const saveToExcel = async () => {
 
   try {
     try {
-      await axios.delete(`https://api.nemsu-grading.online/api/upload/files/${selectedFile.value.id}`)
+      await axios.delete(`http://localhost:1337/api/upload/files/${selectedFile.value.id}`)
     } catch (error) {
       console.log("file not exists upload proceed")
     }
@@ -283,7 +292,7 @@ const saveToExcel = async () => {
     console.log(JSON.parse(sessionStorage.getItem("profile")).id)
     
     // Make an API request to Strapi to save the file
-    const response = await fetch('https://api.nemsu-grading.online/api/upload/', {
+    const response = await fetch('http://localhost:1337/api/upload/', {
       method: 'POST',
       body: formData,
       // Uncomment if you need to send authorization token
@@ -309,13 +318,32 @@ const saveToExcel = async () => {
   }
 };
 
+const deleteFile = async () => {
+  try {
+      await axios.delete(`http://localhost:1337/api/upload/files/${selectedFile.value.id}`)
+    } catch (error) {
+      console.log("file not exists upload proceed")
+    } finally { 
+    const hotInstance = hotTableRef.value.hotInstance;
+    if (hotInstance) {
+      hotInstance.loadData([]);
+      hotInstance.updateSettings({ cells: hotSettings.value.cells });
+      loading.value = false; // Start loading
+    }
+    selectedFile.value = []
+    loading.value = false
+    isRenameModalVisible.value =false
+    fetchFiles()
+  }
+}
+
 const submitToAdmin = async () => {
   console.log(data.value)
 
     const semester = data.value[8][6].charAt(0); 
     const schoolYear = data.value[8][6].match(/\d{4}-\d{4}/)[0];
 
-    const response = await axios.get(`https://api.nemsu-grading.online/api/school-years?filters[year][$eq]=${schoolYear}&filters[sem][$eq]=${semester}&filters[active][$eq]=true`, {
+    const response = await axios.get(`http://localhost:1337/api/school-years?filters[year][$eq]=${schoolYear}&filters[sem][$eq]=${semester}&filters[active][$eq]=true`, {
       headers: {
         'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
       }
@@ -356,7 +384,7 @@ const submitToAdmin = async () => {
   students.forEach(async (data) => {
   try {
     const token = sessionStorage.getItem("jwt")
-    const response = await axios.post('https://api.nemsu-grading.online/api/grade-masterlists', {data}, {
+    const response = await axios.post('http://localhost:1337/api/grade-masterlists', {data}, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -407,7 +435,7 @@ const submitToAdmin = async () => {
  
   try {
     try {
-      await axios.delete(`https://api.nemsu-grading.online/api/upload/files/${selectedFile.value.id}`)
+      await axios.delete(`http://localhost:1337/api/upload/files/${selectedFile.value.id}`)
     } catch (error) {
       console.log("file not exists upload proceed")
     }
@@ -415,14 +443,14 @@ const submitToAdmin = async () => {
     console.log(JSON.parse(sessionStorage.getItem("profile")).id)
     
     // Make an API request to Strapi to save the file
-    const response = await fetch('https://api.nemsu-grading.online/api/upload/', {
+    const response = await fetch('http://localhost:1337/api/upload/', {
       method: 'POST',
       body: formData,
       // Uncomment if you need to send authorization token
       // headers: { 'Authorization': `Bearer ${token}` },
     });
 
-    await fetch('https://api.nemsu-grading.online/api/upload/', {
+    await fetch('http://localhost:1337/api/upload/', {
       method: 'POST',
       body: formData2,
       // Uncomment if you need to send authorization token
@@ -540,6 +568,7 @@ const s2ab = (s) => {
     fetchFiles();
     fetchSchoolYear();
     return {
+      deleteFile,
       hotTableRef,
       data,
       hotSettings,
