@@ -3,9 +3,9 @@
     <loading-component :isLoading="isLoading" />
     <!-- Profile Header -->
     <div class="bg-blue-500 h-32 rounded-lg mb-6 relative">
-      <!-- <img src="@/assets/logo.jpg" alt="Header Image" class="w-full h-full object-cover rounded-t-lg"/> -->
+      <img src="@/assets/logo.jpg" alt="Header Image" class="w-full h-full object-cover rounded-t-lg"/>
       <div class="absolute bottom-0 left-0 right-0 flex justify-center items-end pb-4">
-        <img src="@/assets/logo.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-white object-cover"/>
+        <img :src="profile.profilePicture" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-white object-cover"/>
       </div>
     </div>
 
@@ -149,7 +149,7 @@ export default {
     async loadProfile() { 
     try {
        this.isLoading = true
-      const response = await axios.get(`http://localhost:1337/api/users/${this.profileId}`, {
+      const response = await axios.get(`https://nemsu-grading.online/api/users/${this.profileId}`, {
         headers: {
           'Authorization': `Bearer ${this.token}`
         }
@@ -202,7 +202,7 @@ export default {
     if (this.profilePic) { 
       formData.append('profilePicture', this.profilePic);
     } 
-    const response = await axios.put(`http://localhost:1337/api/users/${this.profileId}`, formData, {
+    const response = await axios.put(`https://nemsu-grading.online/api/users/${this.profileId}`, formData, {
       headers: {
         'Authorization': `Bearer ${this.token}`,
         'Content-Type': 'multipart/form-data'

@@ -16,14 +16,24 @@
       <table>
         <thead>
           <tr>
-            <th>Subject</th>
+            <th>Subject Code</th> 
+            <th>Description</th> 
+            <th>SY</th>
+            <th>Sem</th>
+            <th>Remarks</th>
+            <th>Instructor</th>
             <th>Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="subject in selectedStudent.subjects" :key="subject.code">
-            <td>{{ subject.name }}</td>
-            <td :class="subject.status">{{ subject.status }}</td>
+          <tr v-for="subject in grades" :key="subject.code">
+            <td>{{ subject.subject_no }}</td>
+            <td>{{ subject.description }}</td> 
+            <td :class="subject.status">{{ subject.sy }}</td>
+            <td :class="subject.status">{{ subject.semester }}</td>
+            <td :class="subject.status">{{ subject.remarks }}</td>
+            <td :class="subject.status">{{ subject.instructor }}</td>
+            <td :class="subject.status">{{ subject.status == 1 ? 'Active': 'Not Active'}}</td>
           </tr>
         </tbody>
       </table>
@@ -31,16 +41,38 @@
       <!-- Create Evaluation Result -->
       <h3>Create Evaluation Result</h3>
       <div class="evaluation-form">
-        <div v-for="(subject) in availableSubjects" :key="subject.code">
-          <label>
+        <!-- <div v-for="(subject) in prospectos" :key="subject.code"> -->
+          <!-- <label>
             <input 
               type="checkbox" 
               v-model="selectedSubjects" 
               :value="subject.code"
             />
-            {{ subject.name }} ({{ subject.units }} units)
-          </label>
-        </div>
+            {{ subject.code }} {{ subject.year }}  ({{ subject.units }} units)
+          </label> -->
+          <table>
+            <thead>
+              <tr>
+                <th>Subject Code</th> 
+                <th>Description</th>
+                <th>Year Level</th>
+                <th>SY</th>
+                <th>Sem</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="subject in prospectos" :key="subject.code">
+                <td>{{ subject.code }}</td>
+                <td>{{ subject.description }}</td>
+                <td :class="subject.status">{{ subject.year }}</td>
+                <td :class="subject.status">{{ subject.sy }}</td>
+                <td :class="subject.status">{{ subject.sem }}</td>
+                <td :class="subject.status">{{ subject.status == 1 ? 'Active': 'Not Active'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        <!-- </div> -->
         <button @click="submitEvaluation">Submit Evaluation</button>
       </div>
     </div>
@@ -48,10 +80,13 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
       searchQuery: '',
+      prospectos: '',
+      grades: '',
       selectedStudent: null,
       availableSubjects: [
         // Example data, replace with actual data from API
@@ -63,21 +98,33 @@ export default {
     };
   },
   methods: {
-    searchStudent() {
+    async searchStudent() {
       // Replace with actual API call to fetch student data
       // Mock data for demonstration
-      const mockStudentData = {
-        id: 1,
-        name: 'John Doe',
-        subjects: [
-          { code: 'SUBJ101', name: 'Mathematics', status: 'Passed' },
-          { code: 'SUBJ102', name: 'English', status: 'Failed' },
-        ]
-      };
+      // const mockStudentData = {
+      //   id: 1,
+      //   name: 'John Doe',
+      //   subjects: [
+      //     { code: 'SUBJ101', name: 'Mathematics', status: 'Passed' },
+      //     { code: 'SUBJ102', name: 'English', status: 'Failed' },
+      //   ]
+      // };
+      
       
       // Assuming the search query matches the mock data
       if (this.searchQuery) {
-        this.selectedStudent = mockStudentData;
+
+      const evaluateData = await axios.get(`https://nemsu-grading.online/api/evaluation/${this.searchQuery}`, {
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem("jwt")}`
+        }
+      });
+
+      const { prospectos, student_info, grades } = evaluateData.data;
+
+        this.selectedStudent = student_info;
+        this.prospectos  = prospectos;
+        this.grades = grades;
       }
     },
     submitEvaluation() {

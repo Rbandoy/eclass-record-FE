@@ -71,7 +71,7 @@ export default {
     async UserLogin() {
       this.isSubmitting = true;
       try {
-        const response = await axios.post('http://localhost:1337/api/auth/local?populate[user_permission]=*', {
+        const response = await axios.post('https://nemsu-grading.online/api/auth/local?populate[user_permission]=*', {
           identifier: this.username,
           password: this.password,
         });
@@ -81,7 +81,7 @@ export default {
         let config = {
           method: 'get',
           maxBodyLength: Infinity,
-          url: 'http://localhost:1337/api/users/me?populate=*',
+          url: 'https://nemsu-grading.online/api/users/me?populate=*',
           headers: { 
             'Content-Type': 'application/json', 
             'Authorization': `Bearer ${jwt}`

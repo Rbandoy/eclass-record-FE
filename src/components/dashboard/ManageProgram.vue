@@ -142,7 +142,7 @@ export default {
       try {
         this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
-        const response = await axios.get('http://localhost:1337/api/subjects', {
+        const response = await axios.get('https://nemsu-grading.online/api/subjects', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -159,7 +159,7 @@ export default {
       try {
 
         const token = sessionStorage.getItem('jwt');
-        const response = await axios.get('http://localhost:1337/api/school-years?filters[active][$eq]=active', {
+        const response = await axios.get('https://nemsu-grading.online/api/school-years?filters[active][$eq]=active', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -175,7 +175,7 @@ export default {
       try {
         this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
-        await axios.post('http://localhost:1337/api/subjects', {data: {...this.programForm}}, {
+        await axios.post('https://nemsu-grading.online/api/subjects', {data: {...this.programForm}}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -204,7 +204,7 @@ export default {
       try {
         this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
-        await axios.put(`http://localhost:1337/api/subjects/${this.programForm.id}`, {data: {...this.programForm}}, {
+        await axios.put(`https://nemsu-grading.online/api/subjects/${this.programForm.id}`, {data: {...this.programForm}}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -223,7 +223,7 @@ export default {
       try {
         this.isLoading = true;
         const token = sessionStorage.getItem('jwt');
-        await axios.delete(`http://localhost:1337/api/subjects/${id}`, {
+        await axios.delete(`https://nemsu-grading.online/api/subjects/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
