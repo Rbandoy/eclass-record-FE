@@ -38,8 +38,20 @@
     </div>
 
     <!-- Report of Grades (shown after successful login) -->
-    <div v-else class="w-full max-w-5xl p-8 bg-white rounded-lg shadow-lg" ref="printSection">
+    <div v-else  class="w-full max-w-5xl p-8 bg-white rounded-lg shadow-lg" >
+      <div class="mb-4">
+        <ul class="flex border-b">
+          <li @click="activeTab = 'grades'" :class="{'border-b-2 border-blue-500': activeTab === 'grades'}" class="cursor-pointer px-4 py-2">
+            Grades
+          </li>
+          <li @click="activeTab = 'evaluation'" :class="{'border-b-2 border-blue-500': activeTab === 'evaluation'}" class="cursor-pointer px-4 py-2">
+            Evaluation
+          </li>
+        </ul>
+      </div>
       <!-- Header Section -->
+       <div  ref="printSection" class="print-section" >
+ 
       <div class="flex items-center mb-4">
         <div class="flex w-full space-x-2 items-center justify-center">
           <img src="@/assets/logo.jpg" alt="School Logo" class="h-20 w-20" />
@@ -47,7 +59,7 @@
             <h2 class="text-lg font-semibold text-gray-700">NORTH EASTERN MINDANAO STATE UNIVERSITY</h2>
             <h3 class="text-sm font-medium text-gray-500">Cantilan, Surigao del Sur</h3>
             <h3 class="text-sm font-medium text-gray-500">Report of Grades</h3>
-            <p class="text-xs text-gray-500">SY: {{ grades.grades.sy }} Term: {{ grades.grades.sem }}</p>
+            <p class="text-xs text-gray-500">SY: {{ school_year?.year }} Term: {{ school_year?.sem }}</p>
           </div>
         </div>
         <!-- <div class="text-right">
@@ -59,23 +71,23 @@
       <div class="border-t border-b py-4 mb-4">
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">IDNO:</span> {{ grades.attributes.student_id }}</p>
-            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Lastname:</span> {{ grades.attributes.lname }}</p>
-            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Firstname:</span> {{ grades.attributes.fname }}</p>
-            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Middle Name:</span> {{ grades.attributes.mname }}</p>
-            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Sex:</span> {{ grades.attributes.gender }}</p>
+            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">IDNO:</span> {{ student_info.attributes.student_id }}</p>
+            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Lastname:</span> {{ student_info.attributes.lname }}</p>
+            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Firstname:</span> {{ student_info.attributes.fname }}</p>
+            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Middle Name:</span> {{ student_info.attributes.mname }}</p>
+            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Sex:</span> {{ student_info.attributes.gender }}</p>
           </div>
           <div>
-            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Course:</span> {{ grades.attributes.course }}</p>
-            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Year Level:</span> {{ grades.attributes.year }}</p>
-            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">GPA:</span> 1.87</p>
+            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Course:</span> {{ student_info.attributes.course }}</p>
+            <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Year Level:</span> {{ student_info.attributes.year }}</p>
+            <p v-if="activeTab === 'grades'" class="text-sm font-medium text-gray-700"><span class="font-semibold">GPA:</span> {{ getGPA() }}</p>
           </div>
         </div>
       </div>
 
       <!-- Grades Table -->
-      <div class="mt-4">
-        <table class="min-w-full table-auto border border-gray-300">
+      <div v-if="activeTab === 'grades'" class="mt-4">
+        <table   class="min-w-full table-auto border border-gray-300">
           <thead class="bg-gray-200">
             <tr>
               <th class="px-2 py-2 border font-medium text-sm text-gray-700">Course No.</th>
@@ -90,7 +102,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="grade in grades.grades" :key="grade.id" class="hover:bg-gray-100">
+            <tr v-for="grade in grades" :key="grade.id" class="hover:bg-gray-100">
               <td class="px-2 py-2 border text-sm text-gray-600">{{ grade.subject_no }}</td>
               <td class="px-2 py-2 border text-sm text-gray-600">{{ grade.section }}</td>
               <td class="px-2 py-2 border text-sm text-gray-600">{{ grade.description }}</td>
@@ -103,12 +115,56 @@
             </tr>
           </tbody>
         </table>
-        <p class="text-right mt-4 text-sm font-semibold text-gray-700">Total Units: 26</p>
+        <p class="text-right mt-4 text-sm font-semibold text-gray-700">Total Units: {{ grades.reduce((acc, cur) => acc + Number(cur.units), 0)}}</p> 
+      </div>
+
+      <div v-if="activeTab === 'evaluation'" class="mt-4">
+        <table   class="min-w-full table-auto border border-gray-300">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Course No.</th>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Section</th>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Descriptive Title</th>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Time</th>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Days</th>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Room</th>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Bldg</th>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Lec</th>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Lab</th>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Units</th>
+              <th class="px-2 py-2 border font-medium text-sm text-gray-700">Instructor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="evals in evaluation" :key="evals.id" class="hover:bg-gray-100">
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.subject_code }}</td>
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.section }}</td>
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.description }}</td>
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.time }}</td>
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.days }}</td>
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.room }}</td>
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.bldg }}</td>
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.lecture }}</td>
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.laboratory }}</td>
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.units }}</td>
+              <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.instructor }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="flex justify-between">
+          <p v-if="activeTab === 'evaluation'" class="text-left mt-4 text-sm font-semibold text-gray-700"><small class="font-semibold italic">note: Schedules may change depending on the no. of students & faculty loading. please be guided accordingly</small></p>
+        <p class="text-right mt-4 text-sm font-semibold text-gray-700">Total Units: {{ evaluation.reduce((acc, cur) => acc + Number(cur.units), 0)}}</p> 
+        </div>
+        
+        <p class="text-left mt-12 text-sm   text-gray-700  ">Certified By: <span class="uppercase underline">{{ evaluation[0].evaluator.lname }}, {{ evaluation[0].evaluator.fname }}</span></p>
+        <p class="text-left mt-12 text-sm   text-gray-700  ">Evaluated By: <span class="uppercase underline">{{ evaluation[0].evaluator.lname }}, {{ evaluation[0].evaluator.fname }}</span></p>
+        <small class="text-left mt-4 text-xs   text-gray-700">Date: {{ new Date(Date.now()).getFullYear() }}/{{ new Date(Date.now()).getMonth() }}/{{ new Date(Date.now()).getDate() }}</small>
+      </div>
       </div>
 
       <!-- Print Button -->
       <div class="flex justify-center mt-6">
-        <Button @click="printReport" class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-150">
+        <Button @click="saveAsPDF" class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-150">
           Print Report
         </Button>
       </div>
@@ -119,6 +175,8 @@
 <script>
 import axios from 'axios';
 import Button from './reuseable/ButtonComponent.vue';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default {
   name: "ViewGrades",
@@ -131,7 +189,11 @@ export default {
       password: '',
       errorMessage: '',
       isSubmitting: false,
-      grades: null
+      grades: null,
+      student_info: null,
+      evaluation: null,
+      activeTab: 'grades', 
+      school_year: null
     };
   },
   methods: {
@@ -140,11 +202,15 @@ export default {
 
       try {
         const response = await axios.get(`https://api.nemsu-grading.online/api/students?filters[username][$eq]=${this.username}&filters[password][$eq]=${this.password}&filters[activated][$eq]=true`);
-        
-        const data = response.data.data[0];
        
-        this.grades = data;
-        console.log(this.grades.grades.sy)
+        const data = response.data.data[0];
+        console.log(data)
+        this.student_info = data;
+        this.grades = data.grades;
+        this.evaluation = data.active_evaluation;
+        this.school_year = data.school_year;
+        console.log(this.evaluation)
+        this.getGPA()
       } catch (error) {
         this.errorMessage = 'Login failed. Please try again.';
         console.log(error);
@@ -155,63 +221,53 @@ export default {
     printReport() {
   try {
     const printSection = this.$refs.printSection;
-    const printWindow = window.open('', '', 'height=600,width=800');
-
-    printWindow.document.write('<html><head><title>Print Grades Report</title>');
-    // Add styles to the print window
-    printWindow.document.write('<style>');
-    printWindow.document.write('body { font-family: Arial, sans-serif; margin: 0; padding: 0; }');
-    printWindow.document.write('.flex { display: flex; }');
-    printWindow.document.write('.items-center { align-items: center; }');
-    printWindow.document.write('.justify-center { justify-content: center; }');
-    printWindow.document.write('.min-h-screen { min-height: 100vh; }');
-    printWindow.document.write('.bg-gray-100 { background-color: #f7fafc; }');
-    printWindow.document.write('.bg-white { background-color: #fff; }');
-    printWindow.document.write('.rounded-lg { border-radius: 0.5rem; }');
-    printWindow.document.write('.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }');
-    printWindow.document.write('.text-gray-700 { color: #4a5568; }');
-    printWindow.document.write('.text-gray-500 { color: #a0aec0; }');
-    printWindow.document.write('.text-sm { font-size: 0.875rem; }');
-    printWindow.document.write('.text-lg { font-size: 1.125rem; }');
-    printWindow.document.write('.font-semibold { font-weight: 600; }');
-    printWindow.document.write('.font-medium { font-weight: 500; }');
-    printWindow.document.write('.border { border: 1px solid #ccc; }');
-    printWindow.document.write('.border-t { border-top: 1px solid #ccc; }');
-    printWindow.document.write('.border-b { border-bottom: 1px solid #ccc; }');
-    printWindow.document.write('.p-8 { padding: 2rem; }');
-    printWindow.document.write('.py-4 { padding-top: 1rem; padding-bottom: 1rem; }');
-    printWindow.document.write('.mt-4 { margin-top: 1rem; }');
-    printWindow.document.write('.mb-4 { margin-bottom: 1rem; }');
-    printWindow.document.write('.grid { display: grid; }');
-    printWindow.document.write('.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }');
-    printWindow.document.write('.gap-4 { gap: 1.5rem; }');
-    printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 1rem; }');
-    printWindow.document.write('th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }');
-    printWindow.document.write('th { background-color: #e2e8f0; }');
-    printWindow.document.write('.hover\\:bg-gray-100:hover { background-color: #f7fafc; }');
-    printWindow.document.write('.text-right { text-align: right; }');
-
-    // Styles for images
-    printWindow.document.write('img { width: 20px; height: 20px; }');
-    printWindow.document.write('</style>');
-    printWindow.document.write('</head><body>');
-    
-    // Add the content you want to print
-    printWindow.document.write(printSection.innerHTML);
-    printWindow.document.write('</body></html>');
-    
-    printWindow.document.close();
-    printWindow.print();
+    printSection.print()
   } catch (error) { 
     console.log(error);
   }
-}
+}, async saveAsPDF() {
+  const printSection = this.$refs.printSection;
+      const canvas = await html2canvas(printSection, {
+        scale: 5, // Increases the quality of the image
+      });
+      const imgData = canvas.toDataURL('image/png');
+      
+      // Create a new jsPDF instance with landscape orientation
+      const pdf = new jsPDF('portrait', 'pt', 'a4'); // Use 'pt' for points and 'a4' for paper size
+      
+      // Get the dimensions of the PDF
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
+      // Calculate the aspect ratio
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const aspectRatio = imgHeight / imgWidth;
+      
+      // Set image dimensions for PDF
+      const imgPdfWidth = pdfWidth;
+      const imgPdfHeight = imgPdfWidth * aspectRatio;
+      console.log(pdfHeight)
+      // Add the image to the PDF
+      pdf.addImage(imgData, 'PNG', 0, 0, imgPdfWidth, imgPdfHeight);
+      pdf.save(`${this.activeTab}-${this.evaluation[0].school_year}-${this.evaluation[0].sem}.pdf`); // Save the PDF with a name
+    }, 
+  getGPA(){
+    const grades = this.grades;
+    console.log(grades.length)
+    const numberOfSubject = grades.length
+    const totalGrades = grades.reduce((acc, cur) => acc + Number(cur.grade),0)
+    const totalGPA = totalGrades/numberOfSubject;
 
-
-  },
+    return Number(totalGPA).toFixed(2);
+  }
+  }
 };
 </script>
 
 <style scoped>
-/* Additional styling to enhance the layout and presentation */
+.print-section { 
+  padding: 20px;
+  border: 1px solid #ccc;
+}
 </style>
