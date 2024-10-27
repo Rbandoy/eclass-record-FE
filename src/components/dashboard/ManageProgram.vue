@@ -9,7 +9,7 @@
     </div>
 
     <!-- Program List --> 
-    <div class="overflow-x-auto mt-10">
+    <div class="overflow-auto mt-10 h-[70%]">
       <table class="min-w-full bg-white border border-gray-200 text-[12px]">
         <thead>
           <tr>

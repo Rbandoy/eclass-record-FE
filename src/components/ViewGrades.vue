@@ -156,8 +156,8 @@
         <p class="text-right mt-4 text-sm font-semibold text-gray-700">Total Units: {{ evaluation.reduce((acc, cur) => acc + Number(cur.units), 0)}}</p> 
         </div>
         
-        <p class="text-left mt-12 text-sm   text-gray-700  ">Certified By: <span class="uppercase underline">{{ evaluation[0].evaluator.lname }}, {{ evaluation[0].evaluator.fname }}</span></p>
-        <p class="text-left mt-12 text-sm   text-gray-700  ">Evaluated By: <span class="uppercase underline">{{ evaluation[0].evaluator.lname }}, {{ evaluation[0].evaluator.fname }}</span></p>
+        <p class="text-left mt-12 text-sm   text-gray-700  ">Certified By: <span class="uppercase underline">{{ evaluation[0]?.evaluator.lname }}, {{ evaluation[0]?.evaluator.fname }}</span></p>
+        <p class="text-left mt-12 text-sm   text-gray-700  ">Evaluated By: <span class="uppercase underline">{{ evaluation[0]?.evaluator.lname }}, {{ evaluation[0]?.evaluator.fname }}</span></p>
         <small class="text-left mt-4 text-xs   text-gray-700">Date: {{ new Date(Date.now()).getFullYear() }}/{{ new Date(Date.now()).getMonth() }}/{{ new Date(Date.now()).getDate() }}</small>
       </div>
       </div>

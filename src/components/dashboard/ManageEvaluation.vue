@@ -276,7 +276,7 @@ export default {
           const evaluationData = {
             school_year: this.selected_school_year,
             sem: String(this.eval_sem),
-            student_id: String(this.selectedStudent.id),
+            student_id: String(this.selectedStudent.student_id),
             subject_code: subject.code,
             description: subject.description,
             laboratory: String(subject.laboratory),
