@@ -8,14 +8,18 @@
     </select>
 
     <!-- Custom File Import Button -->
-    <label class="custom-file-upload  save-button">
+    <!-- <label class="custom-file-upload  save-button">
       <input type="file" @change="onFileChange" />
       Import File
-    </label>
-    <button @click="exportToExcel" class="export-button ">Export to Excel</button>
-    <button @click="openRenameModal" class="save-button ">Save Changes</button>
-    <button @click="submitToAdmin" class="save-button">Submit Grades</button>
-    <button @click="deleteFile" v-if="selectedFile?.id" class="save-button">Delete File</button>
+    </label> -->
+    <!-- <button @click="exportToExcel" class="export-button ">Export to Excel</button> -->
+     <div class="flex flex-row gap-2"> 
+      <button @click="fetchDefaultExcel" class="save-button ">Class Record</button>
+      <button @click="openRenameModal" class="save-button ">Save Changes</button>
+      <button @click="submitToAdmin" class="save-button">Submit Grades</button>
+      <button @click="deleteFile" v-if="selectedFile?.id" class="save-button">Delete File</button>
+     </div>
+  
     
 
     <div v-if="isRenameModalVisible" class="rename-modal">
@@ -34,35 +38,37 @@
       </div>
     </div>  
 
+   <div class="hot-table"> 
     <hot-table 
-      ref="hotTableRef"
-      :data="data"
-      :settings="hotSettings"
-      :rowHeaders="true"
-      :colHeaders="true"
-      licenseKey="non-commercial-and-evaluation"
-      class="hot-table"
-    />
+    ref="hotTableRef"
+    :data="data"
+    :settings="hotSettings"
+    :rowHeaders="true"
+    :colHeaders="true"
+    licenseKey="non-commercial-and-evaluation"
+    class="overflow-auto"
+  />
+   </div>
     <div v-if="selectedFile" class="zoom-controls">
       <!-- Zoom In button with SVG -->
-      <button @click="zoomIn" aria-label="Zoom In">
+      <!-- <button @click="zoomIn" aria-label="Zoom In">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-5H6v-2h5V6h2v5h5v2h-5v5z"/>
         </svg>
-      </button>
+      </button> -->
   
       <!-- Zoom Out button with SVG -->
-      <button @click="zoomOut" aria-label="Zoom Out">
+      <!-- <button @click="zoomOut" aria-label="Zoom Out">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/>
         </svg>
-      </button>
+      </button> -->
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, reactive } from 'vue';
 import { HotTable } from '@handsontable/vue3';
 import { registerAllModules } from 'handsontable/registry';
 import * as XLSX from 'xlsx';
@@ -88,6 +94,65 @@ export default defineComponent({
     const isRenameModalVisible = ref(false);
     const newFileName = ref('');
     const extension = ref(`@${JSON.parse(sessionStorage.getItem("profile")).id}`)
+
+    const focusedCell = reactive({ row: null, col: null });
+
+    const onCellSelect = (row, col) => {
+      focusedCell.row = row;
+      focusedCell.col = col; 
+    };
+
+    const onCellChange = async (changes) => {
+  const hotInstance = hotTableRef.value.hotInstance;
+  
+  if (changes && changes.length) {
+    for (const [row, col, oldValue, newValue] of changes) { 
+      
+      // Check if the value has changed in the target column (0 in this example)
+      if (oldValue !== newValue && col === 0 && row > 9) { 
+
+        const nextCol = col + 1;
+
+        // Check if the right cell exists before attempting update
+        if (hotInstance && hotInstance.getDataAtCell(row, nextCol) !== undefined) {
+          // Optional: Set a temporary loading indicator
+          hotInstance.setDataAtCell(row, nextCol, "Loading...");
+
+          try {
+            // Call the API and wait for the data
+            const loadedData = await loadStudents(newValue);
+
+            // Update the adjacent cell with the received data
+            const studentName = `${loadedData}`;
+            hotInstance.setDataAtCell(row, nextCol, studentName  == "undefined" ? "": studentName);
+            hotInstance.setDataAtCell(row, 27, studentName  == "undefined" ? "": studentName);
+            hotInstance.setDataAtCell(row, 54, studentName  == "undefined" ? "": studentName);
+          } catch (error) {
+            console.error("Error loading data:", error);
+            // Optional: Display error text or keep previous value 
+          }
+        }
+      }
+    }
+  }
+};
+
+
+    const loadStudents = async (student_id) => {
+      try { 
+        const token = sessionStorage.getItem('jwt');
+        const response = await axios.get(`https://api.nemsu-grading.online/api/students?filters[student_id][$eq]=${student_id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+  
+        return `${response.data.data[0].attributes.lname}, ${response.data.data[0].attributes.fname} ${response.data.data[0].attributes.mname}`; // Adjust based on the actual response structure
+      } catch (error) {
+        console.error('Error fetching students:', error);
+      }  
+    };
+    
     const hotSettings = ref({
       colHeaders: true,
       rowHeaders: true,
@@ -106,11 +171,15 @@ export default defineComponent({
       width: '100%',
       height: '100%',
       cells: (row, col) => cellSettings(row, col),
+      afterChange: onCellChange,
+      afterSelection: onCellSelect,
     });
 
+    
+ 
+
     const openRenameModal = () => {
-      if (selectedFile.value) {
-        console.log(selectedFile.value.name)
+      if (selectedFile.value) { 
         newFileName.value = selectedFile.value.name; // Pre-fill the current name
         isRenameModalVisible.value = true;
       }
@@ -137,10 +206,10 @@ export default defineComponent({
         };
         const response = await axios.request(config);
         files.value = response.data.reduce((acc, cur) => {
-          console.log(cur?.name.includes(extension.value), extension.value);
-          if (cur?.name.includes(extension.value)) {
+          
+          if (cur?.name.includes(extension.value) && !cur?.name.includes("default")) {
             cur.name = cur.name.replace(extension.value, "")
-            console.log(cur.name)
+            
             acc.push(cur);
           }
           return acc; // You must return the accumulator
@@ -151,11 +220,47 @@ export default defineComponent({
       }
     };
 
+    const fetchDefaultExcel = async () => { 
+      try {
+          loading.value = true; // Start loading
+          const response = await fetch(`https://api.nemsu-grading.online/uploads/default_59f216f320.xlsx@23`);
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const arrayBuffer = await response.arrayBuffer();
+          const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          const excelData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, raw: false });
+          const merges = firstSheet['!merges'] || [];
+          console.log(firstSheet)
+          const processedData = processMergedCells(excelData, merges);
+          data.value = processedData.data;
+          hotSettings.value.mergeCells = processedData.mergeCells;
+          const hotInstance = hotTableRef.value.hotInstance;
+          selectedFile.value = response
+          if (hotInstance) {
+            hotInstance.loadData(processedData.data);
+            hotInstance.updateSettings({ cells: hotSettings.value.cells });
+            loading.value = false; // Start loading
+          }
+        } catch (error) {
+          console.error('Error loading file:', error);
+  
+          const hotInstance = hotTableRef.value.hotInstance;
+          if (hotInstance) {
+            hotInstance.loadData([]);
+            hotInstance.updateSettings({ cells: hotSettings.value.cells });
+            loading.value = false; // Start loading
+          } 
+          loading.value = false 
+        }
+    }
+
+
     // Load file function
     const loadFile = async () => {
       if (selectedFile.value) {
         try {
-          console.log(selectedFile.value)
+          
           loading.value = true; // Start loading
           const response = await fetch(`https://api.nemsu-grading.online${selectedFile.value.url}`);
           if (!response.ok) throw new Error('Network response was not ok');
@@ -186,7 +291,7 @@ export default defineComponent({
             loading.value = false; // Start loading
           } 
           loading.value = false 
-      }
+        }
       }
     };
 
@@ -202,7 +307,7 @@ export default defineComponent({
         };
 
         const sy = await axios.request(config)
-        console.log(sy.data.data[0])
+        
         activeSchoolYear.value = sy.data.data[0].attributes
     }
 
@@ -214,7 +319,7 @@ export default defineComponent({
         reader.onload = (event) => {
           loading.value = true
           selectedFile.value = file
-          console.log(file)
+          
           const arrayBuffer = new Uint8Array(event.target.result);
           const workbook = XLSX.read(arrayBuffer, { type: 'array' });
           const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -257,7 +362,7 @@ export default defineComponent({
     // Save changes to Excel
    // Save changes to Excel
 const saveToExcel = async () => {
-  console.log(selectedFile.value.length)
+  
   if (selectedFile.value.length == 0) return
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(data.value);
@@ -286,10 +391,10 @@ const saveToExcel = async () => {
     try {
       await axios.delete(`https://api.nemsu-grading.online/api/upload/files/${selectedFile.value.id}`)
     } catch (error) {
-      console.log("file not exists upload proceed")
+      // 
     }
 
-    console.log(JSON.parse(sessionStorage.getItem("profile")).id)
+    
     
     // Make an API request to Strapi to save the file
     const response = await fetch('https://api.nemsu-grading.online/api/upload/', {
@@ -299,8 +404,8 @@ const saveToExcel = async () => {
       // headers: { 'Authorization': `Bearer ${token}` },
     });
 
-    const result = await response.json();
-    console.log('File updated on server:', result);
+          await response.json();
+    
   } catch (error) {
     console.error('Error saving file:', error);
   } finally { 
@@ -322,7 +427,7 @@ const deleteFile = async () => {
   try {
       await axios.delete(`https://api.nemsu-grading.online/api/upload/files/${selectedFile.value.id}`)
     } catch (error) {
-      console.log("file not exists upload proceed")
+      // 
     } finally { 
     const hotInstance = hotTableRef.value.hotInstance;
     if (hotInstance) {
@@ -338,8 +443,7 @@ const deleteFile = async () => {
 }
 
 const submitToAdmin = async () => {
-  console.log(data.value)
-
+  
     const semester = data.value[8][6].charAt(0); 
     const schoolYear = data.value[8][6].match(/\d{4}-\d{4}/)[0];
 
@@ -384,23 +488,19 @@ const submitToAdmin = async () => {
   students.forEach(async (data) => {
   try {
     const token = sessionStorage.getItem("jwt")
-    const response = await axios.post('https://api.nemsu-grading.online/api/grade-masterlists', {data}, {
+     await axios.post('https://api.nemsu-grading.online/api/grade-masterlists', {data}, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(`Created entry: ${response.data}`);
+    
   } catch (error) {
     console.error(`Failed to create entry: ${error}`);
   }
 });
  
-  console.log(students)
 
-  console.log()
-  console.log(selectedFile.value.length)
-  console.log(selectedFile.value.name)
   if (!selectedFile.value.name.includes("FRating")) {
     alert("not final rating")
     return
@@ -437,10 +537,10 @@ const submitToAdmin = async () => {
     try {
       await axios.delete(`https://api.nemsu-grading.online/api/upload/files/${selectedFile.value.id}`)
     } catch (error) {
-      console.log("file not exists upload proceed")
+      // 
     }
 
-    console.log(JSON.parse(sessionStorage.getItem("profile")).id)
+    
     
     // Make an API request to Strapi to save the file
     const response = await fetch('https://api.nemsu-grading.online/api/upload/', {
@@ -457,8 +557,8 @@ const submitToAdmin = async () => {
       // headers: { 'Authorization': `Bearer ${token}` },
     });
 
-    const result = await response.json();
-    console.log('File updated on server:', result);
+    await response.json();
+    
   } catch (error) {
     console.error('Error saving file:', error);
   } finally { 
@@ -489,7 +589,7 @@ const s2ab = (s) => {
     const cellSettings = (row, col) => {
       const cellKey = XLSX.utils.encode_cell({ r: row, c: col });
       const cellStyle = data.value[cellKey] || {}; // Use 'data.value' instead of 'dataTable'
-
+ 
       return {
         className: cellStyle.fill ? 'highlight-cell' : '',
         style: {
@@ -587,7 +687,8 @@ const s2ab = (s) => {
       zoomIn,
       zoomOut,
       activeSchoolYear,
-      submitToAdmin
+      submitToAdmin,
+      fetchDefaultExcel
     }; 
   },
 });
@@ -661,7 +762,8 @@ const s2ab = (s) => {
 
 .hot-table {
   transition: transform 0.2s ease; /* Smooth transition for zoom */
-  overflow: auto; /* Allow scrolling for large tables */
+  overflow: hidden; /* Allow scrolling for large tables */
+  height: 80%;
 }
 
 /* Loading Modal Styles */
