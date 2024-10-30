@@ -75,7 +75,7 @@ import * as XLSX from 'xlsx';
 import 'handsontable/dist/handsontable.full.css';
 import { HyperFormula } from 'hyperformula';
 import axios from 'axios';
-
+import * as ExcelJS from 'exceljs';
 // Register Handsontable's modules
 registerAllModules();
 
@@ -223,7 +223,7 @@ export default defineComponent({
     const fetchDefaultExcel = async () => { 
       try {
           loading.value = true; // Start loading
-          const response = await fetch(`https://api.nemsu-grading.online/uploads/default_59f216f320.xlsx@23`);
+          const response = await fetch(`https://api.nemsu-grading.online/uploads/Book2_e8a94132e8.xlsx`);
           if (!response.ok) throw new Error('Network response was not ok');
 
           const arrayBuffer = await response.arrayBuffer();
@@ -231,8 +231,19 @@ export default defineComponent({
           const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
           const excelData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, raw: false });
           const merges = firstSheet['!merges'] || [];
-          console.log(firstSheet)
+          const workbook2 = new ExcelJS.Workbook();
+    
+    // Load the workbook from the ArrayBuffer
+    await workbook2.xlsx.load(arrayBuffer);
+
+    // Access the first worksheet
+    const worksheet = workbook2.worksheets[0];
+
+          console.log(worksheet.model.rows)
+         
           const processedData = processMergedCells(excelData, merges);
+          addFormula(worksheet, processedData.data)
+          console.log("default", processedData)
           data.value = processedData.data;
           hotSettings.value.mergeCells = processedData.mergeCells;
           const hotInstance = hotTableRef.value.hotInstance;
@@ -600,9 +611,25 @@ const s2ab = (s) => {
       };
     };
 
+    const addFormula = (worksheet, data) => {
+      worksheet.eachRow((row) => {
+        console.log(`Row ${row}:`);
+        row.eachCell((cell) => {
+            
+            // const cellValue = cell.value;
+            console.log(row,cell.col, cell.row) 
+            if (cell.formula ) {
+              console.log(data[cell.row])
+              data[cell.row - 1][cell.col - 1] = `=${cell.formula}`
+            } 
+        });
+         });
+    }
+
     const processMergedCells = (excelData, merges) => {
-      const mergedData = excelData.map((row) =>
-        row.map((cell) => (cell && typeof cell === 'object' ? cell.v : cell))
+      const mergedData = excelData.map((row) => { 
+        return row.map((cell) => (cell && typeof cell === 'object' ? cell.v : cell))
+      }
       );
       const mergeSettings = [];
 
