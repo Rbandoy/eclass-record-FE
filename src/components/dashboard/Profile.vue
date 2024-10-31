@@ -5,7 +5,7 @@
     <div class="bg-blue-500 h-32 rounded-lg mb-6 relative">
       <!-- <img src="@/assets/logo.jpg" alt="Header Image" class="w-full h-full object-cover rounded-t-lg"/> -->
       <div class="absolute bottom-0 left-0 right-0 flex justify-center items-end pb-4">
-        <img src="@/assets/logo.jpg" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-white object-cover"/>
+        <img :src="profile.profilePicture" alt="Profile Picture" class="w-24 h-24 rounded-full border-4 border-white object-cover"/>
       </div>
     </div>
 
@@ -22,12 +22,12 @@
         <!-- Profile Picture Upload Field -->
         
 
-        <!-- <div class="flex flex-col">
+        <div class="flex flex-col">
           <label for="profile" class="text-sm font-medium text-gray-700">Profile:</label>
           <input type="text" id="username" class="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
           @change="handleFileUpload"
           v-model="profile.profilePicture" :disabled="!isEditing" />
-        </div> -->
+        </div>
 
         <div class="flex flex-col">
           <label for="username" class="text-sm font-medium text-gray-700">Username:</label>

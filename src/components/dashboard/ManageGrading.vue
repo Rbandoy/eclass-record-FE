@@ -1,24 +1,26 @@
 <template>
   <div class="table-container">
-    <h1 class="bold text-lg mb-5 ">Active: <strong>{{ activeSchoolYear.sem }} SEM. A.Y.  {{ activeSchoolYear.year }} </strong></h1>
-    <label for="file-select" class="file-select-label">Select Class Records:</label>
-    <select id="file-select" v-model="selectedFile" @change="loadFile" class="file-select">
-      <option value="" disabled>Select a file</option>
-      <option v-for="file in files" :key="file.name" :value="file">{{ file.name }}</option>
-    </select>
-
+   
+    <div class="flex flex-row gap-2"> 
+      <h1 class="bold text-lg">Active: <strong>{{ activeSchoolYear.sem }} SEM. A.Y.  {{ activeSchoolYear.year }} </strong></h1>
+    
+      <label for="file-select" class="file-select-label">Select Class Records:</label>
+      <select id="file-select" v-model="selectedFile" @change="loadFile" class="file-select">
+        <option value="" disabled>Select a file</option>
+        <option v-for="file in files" :key="file.name" :value="file">{{ file.name }}</option>
+      </select>
+      <button @click="fetchDefaultExcel" class="save-button ">Class Record</button>
+      <button @click="openRenameModal" class="save-button ">Save Changes</button>
+      <button @click="submitToAdmin" class="save-button">Submit Grades</button>
+      <button @click="deleteFile" v-if="selectedFile?.id" class="save-button">Delete File</button>
+     </div>
     <!-- Custom File Import Button -->
     <!-- <label class="custom-file-upload  save-button">
       <input type="file" @change="onFileChange" />
       Import File
     </label> -->
     <!-- <button @click="exportToExcel" class="export-button ">Export to Excel</button> -->
-     <div class="flex flex-row gap-2"> 
-      <button @click="fetchDefaultExcel" class="save-button ">Class Record</button>
-      <button @click="openRenameModal" class="save-button ">Save Changes</button>
-      <button @click="submitToAdmin" class="save-button">Submit Grades</button>
-      <button @click="deleteFile" v-if="selectedFile?.id" class="save-button">Delete File</button>
-     </div>
+    
   
     
 
@@ -44,7 +46,7 @@
     :data="data"
     :settings="hotSettings"
     :rowHeaders="true"
-    :colHeaders="true"
+    :colHeaders="true" 
     licenseKey="non-commercial-and-evaluation"
     class="overflow-auto"
   />
@@ -93,6 +95,7 @@ export default defineComponent({
     const loading = ref(false); // New loading state
     const isRenameModalVisible = ref(false);
     const newFileName = ref('');
+    const styles = ref({ /* define your style object here */ });
     const extension = ref(`@${JSON.parse(sessionStorage.getItem("profile")).id}`)
 
     const focusedCell = reactive({ row: null, col: null });
@@ -170,7 +173,12 @@ export default defineComponent({
       },
       width: '100%',
       height: '100%',
-      cells: (row, col) => cellSettings(row, col),
+      cells(row, col) {
+        const cellProperties = {};
+        console.log(row,col)
+        cellProperties.renderer = customCellRenderer;
+        return cellProperties;
+      },
       afterChange: onCellChange,
       afterSelection: onCellSelect,
     });
@@ -223,9 +231,8 @@ export default defineComponent({
     const fetchDefaultExcel = async () => { 
       try {
           loading.value = true; // Start loading
-          const response = await fetch(`https://api.nemsu-grading.online/uploads/Book2_e8a94132e8.xlsx`);
+          const response = await fetch(`https://api.nemsu-grading.online/uploads/Book2_3a0d84028b.xlsx`);
           if (!response.ok) throw new Error('Network response was not ok');
-
           const arrayBuffer = await response.arrayBuffer();
           const workbook = XLSX.read(arrayBuffer, { type: 'array' });
           const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -233,76 +240,117 @@ export default defineComponent({
           const merges = firstSheet['!merges'] || [];
           const workbook2 = new ExcelJS.Workbook();
     
-    // Load the workbook from the ArrayBuffer
-    await workbook2.xlsx.load(arrayBuffer);
+        // Load the workbook from the ArrayBuffer
+        await workbook2.xlsx.load(arrayBuffer);
 
-    // Access the first worksheet
-    const worksheet = workbook2.worksheets[0];
+        // Access the first worksheet
+        const worksheet = workbook2.worksheets[0];
 
-          console.log(worksheet.model.rows)
-         
-          const processedData = processMergedCells(excelData, merges);
-          addFormula(worksheet, processedData.data)
-          console.log("default", processedData)
-          data.value = processedData.data;
-          hotSettings.value.mergeCells = processedData.mergeCells;
-          const hotInstance = hotTableRef.value.hotInstance;
-          selectedFile.value = response
-          if (hotInstance) {
-            hotInstance.loadData(processedData.data);
-            hotInstance.updateSettings({ cells: hotSettings.value.cells });
-            loading.value = false; // Start loading
+              console.log(worksheet.model.rows)
+            
+              const processedData = processMergedCells(excelData, merges);
+              addFormula(worksheet, processedData.data)
+              console.log("default", processedData)
+              data.value = processedData.data;
+              hotSettings.value.mergeCells = processedData.mergeCells;
+              const hotInstance = hotTableRef.value.hotInstance;
+              selectedFile.value = response
+              if (hotInstance) {
+                hotInstance.loadData(processedData.data);
+                hotInstance.updateSettings({ cells: hotSettings.value.cells });
+                loading.value = false; // Start loading
+              }
+            } catch (error) {
+              console.error('Error loading file:', error);
+      
+              const hotInstance = hotTableRef.value.hotInstance;
+              if (hotInstance) {
+                hotInstance.loadData([]);
+                hotInstance.updateSettings({ cells: hotSettings.value.cells });
+                loading.value = false; // Start loading
+              } 
+              loading.value = false 
           }
-        } catch (error) {
-          console.error('Error loading file:', error);
-  
-          const hotInstance = hotTableRef.value.hotInstance;
-          if (hotInstance) {
-            hotInstance.loadData([]);
-            hotInstance.updateSettings({ cells: hotSettings.value.cells });
-            loading.value = false; // Start loading
-          } 
-          loading.value = false 
-        }
     }
 
 
     // Load file function
     const loadFile = async () => {
       if (selectedFile.value) {
-        try {
-          
+        // try {
+          try {
           loading.value = true; // Start loading
           const response = await fetch(`https://api.nemsu-grading.online${selectedFile.value.url}`);
           if (!response.ok) throw new Error('Network response was not ok');
-
           const arrayBuffer = await response.arrayBuffer();
           const workbook = XLSX.read(arrayBuffer, { type: 'array' });
           const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
           const excelData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, raw: false });
           const merges = firstSheet['!merges'] || [];
+          const workbook2 = new ExcelJS.Workbook();
+    
+        // Load the workbook from the ArrayBuffer
+        await workbook2.xlsx.load(arrayBuffer);
 
-          const processedData = processMergedCells(excelData, merges);
-          data.value = processedData.data;
-          hotSettings.value.mergeCells = processedData.mergeCells;
-          const hotInstance = hotTableRef.value.hotInstance;
+        // Access the first worksheet
+        const worksheet = workbook2.worksheets[0];
 
-          if (hotInstance) {
-            hotInstance.loadData(processedData.data);
-            hotInstance.updateSettings({ cells: hotSettings.value.cells });
-            loading.value = false; // Start loading
+              console.log(worksheet.model.rows)
+            
+              const processedData = processMergedCells(excelData, merges);
+              addFormula(worksheet, processedData.data)
+              console.log("default", processedData)
+              data.value = processedData.data;
+              hotSettings.value.mergeCells = processedData.mergeCells;
+              const hotInstance = hotTableRef.value.hotInstance;
+              selectedFile.value = response
+              if (hotInstance) {
+                hotInstance.loadData(processedData.data);
+                hotInstance.updateSettings({ cells: hotSettings.value.cells });
+                loading.value = false; // Start loading
+              }
+          } catch (error) {
+              console.error('Error loading file:', error);
+      
+              const hotInstance = hotTableRef.value.hotInstance;
+              if (hotInstance) {
+                hotInstance.loadData([]);
+                hotInstance.updateSettings({ cells: hotSettings.value.cells });
+                loading.value = false; // Start loading
+              } 
+              loading.value = false 
           }
-        } catch (error) {
-          console.error('Error loading file:', error);
+        //   loading.value = true; // Start loading
+        //   const response = await fetch(`https://api.nemsu-grading.online${selectedFile.value.url}`);
+        //   if (!response.ok) throw new Error('Network response was not ok');
+
+        //   const arrayBuffer = await response.arrayBuffer();
+        //   const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        //   const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        //   const excelData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, raw: false });
+        //   const merges = firstSheet['!merges'] || [];
+
+        //   const processedData = processMergedCells(excelData, merges);
+        //   data.value = processedData.data;
+        //   hotSettings.value.mergeCells = processedData.mergeCells;
+        //   const hotInstance = hotTableRef.value.hotInstance;
+
+        //   if (hotInstance) {
+        //     hotInstance.loadData(processedData.data);
+        //     hotInstance.updateSettings({ cells: hotSettings.value.cells });
+        //     loading.value = false; // Start loading
+        //   }
+        // } catch (error) {
+        //   console.error('Error loading file:', error);
   
-          const hotInstance = hotTableRef.value.hotInstance;
-          if (hotInstance) {
-            hotInstance.loadData([]);
-            hotInstance.updateSettings({ cells: hotSettings.value.cells });
-            loading.value = false; // Start loading
-          } 
-          loading.value = false 
-        }
+        //   const hotInstance = hotTableRef.value.hotInstance;
+        //   if (hotInstance) {
+        //     hotInstance.loadData([]);
+        //     hotInstance.updateSettings({ cells: hotSettings.value.cells });
+        //     loading.value = false; // Start loading
+        //   } 
+        //   loading.value = false 
+        // }
       }
     };
 
@@ -597,34 +645,93 @@ const s2ab = (s) => {
 };
 
 
-    const cellSettings = (row, col) => {
-      const cellKey = XLSX.utils.encode_cell({ r: row, c: col });
-      const cellStyle = data.value[cellKey] || {}; // Use 'data.value' instead of 'dataTable'
+    // const cellSettings = (row, col) => {
+    //   const cellKey = XLSX.utils.encode_cell({ r: row, c: col });
+    //   const cellStyle = data.value[cellKey] || {}; // Use 'data.value' instead of 'dataTable'
  
-      return {
-        className: cellStyle.fill ? 'highlight-cell' : '',
-        style: {
-          fontFamily: 'Arial',
-          fontSize: '12px',
-          border: cellStyle.border ? formatBorders(cellStyle.border) : undefined,
-        },
-      };
-    };
+    //   return {
+    //     className: cellStyle.fill ? 'highlight-cell' : '',
+    //     style: {
+    //       fontFamily: 'Arial',
+    //       fontSize: '12px',
+    //       border: cellStyle.border ? formatBorders(cellStyle.border) : undefined,
+    //     },
+    //   };
+    // };
 
     const addFormula = (worksheet, data) => {
+      const cellStyles = [];
       worksheet.eachRow((row) => {
         console.log(`Row ${row}:`);
         row.eachCell((cell) => {
-            
             // const cellValue = cell.value;
             console.log(row,cell.col, cell.row) 
             if (cell.formula ) {
               console.log(data[cell.row])
               data[cell.row - 1][cell.col - 1] = `=${cell.formula}`
             } 
-        });
-         });
+
+            const cellStyle = {
+              row: cell.row - 1,
+              col: cell.col - 1,
+            };
+
+            if (cell.font) {
+              cellStyle.fontStyle = {
+                color: cell.font.color ? `#${cell.font.color}` : undefined,
+                bold: cell.font.bold || false,
+                italic: cell.font.italic || false,
+              };
+            }
+            if (cell.fill) {
+
+        console.log("fill",cell.fill)
+              // const fillColor = cell.fill.fgColor ? `#${cell.fill.fgColor}` : undefined;
+              cellStyle.backgroundColor = cell.fill.bgColor;
+            }
+            if (cell.alignment) {
+              cellStyle.alignment = cell.alignment;
+            }
+ 
+            cellStyles.push(cellStyle);
+            });
+         }); 
+         styles.value = cellStyles;
     }
+
+ 
+  const customCellRenderer = (instance, td, row, col, prop, value, cellProperties) => {
+    // Apply cell value
+    console.log(instance, prop, cellProperties, value)
+    td.innerText = value; 
+    // Apply background color
+    // console.log(styles.value[row], row, styles.value[row].col, col)
+     styles.value.map((style) => {
+      if (style.row == row && style.col == col) {
+      // console.log("match", styles.value[row])
+      if (style.fill && style.fill.fgColor) {
+        td.style.backgroundColor = `#${style.fill.fgColor}`;
+      }
+
+      // Font styles
+      if (style.fontStyle) {
+        // console.log("color", style.fontStyle)
+        td.style.fontWeight = style.fontStyle.bold ? 'bold' : 'normal';
+        td.style.fontStyle = style.fontStyle.italic ? 'italic' : 'normal';
+        td.style.color = style.fontStyle.color ? `#${style.fontStyle.color}` : 'black';
+        td.style.italic = style.fontStyle.italic;
+      }
+
+      // Alignment
+      if (style.alignment) {
+        td.style.textAlign = style.alignment.horizontal || 'left';
+        td.style.verticalAlign = style.alignment.vertical || 'middle';
+      }
+    }
+    return td;
+     })
+    
+  };
 
     const processMergedCells = (excelData, merges) => {
       const mergedData = excelData.map((row) => { 
@@ -659,15 +766,15 @@ const s2ab = (s) => {
       return { data: mergedData, mergeCells: mergeSettings };
     };
 
-    const formatBorders = (borders) => {
-      const borderStyles = Object.entries(borders).map(([key, value]) => {
-        const borderColor = value.color ? `#${value.color}` : 'black';
-        const borderWidth = value.sz ? `${value.sz}px` : '1px';
-        return `${key}: ${borderWidth} solid ${borderColor}`;
-      });
+    // const formatBorders = (borders) => {
+    //   const borderStyles = Object.entries(borders).map(([key, value]) => {
+    //     const borderColor = value.color ? `#${value.color}` : 'black';
+    //     const borderWidth = value.sz ? `${value.sz}px` : '1px';
+    //     return `${key}: ${borderWidth} solid ${borderColor}`;
+    //   });
 
-      return borderStyles.join('; ');
-    };
+    //   return borderStyles.join('; ');
+    // };
 
     // Zoom functionality
     const zoomIn = () => {
@@ -715,7 +822,8 @@ const s2ab = (s) => {
       zoomOut,
       activeSchoolYear,
       submitToAdmin,
-      fetchDefaultExcel
+      fetchDefaultExcel,
+      customCellRenderer
     }; 
   },
 });
@@ -743,7 +851,7 @@ const s2ab = (s) => {
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 100%; /* Full width */
-  font-size: 14px; /* Font size for better readability */
+  font-size: 12px; /* Font size for better readability */
 }
 
 .export-button,
@@ -790,7 +898,7 @@ const s2ab = (s) => {
 .hot-table {
   transition: transform 0.2s ease; /* Smooth transition for zoom */
   overflow: hidden; /* Allow scrolling for large tables */
-  height: 80%;
+  height: 95%;
 }
 
 /* Loading Modal Styles */
