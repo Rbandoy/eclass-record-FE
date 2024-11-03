@@ -251,13 +251,13 @@
         </div>
         <div class="mb-4">
           <label for="year">Year Level:</label>
-          <input
-            type="text"
-            id="year"
-            v-model="studentForm.year"
-            class="input-field"
-            :disabled="isEdit"
-          />
+          <select id="year" v-model="studentForm.year" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500">
+            <option value="1st Year">1st year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+            <option value="5th Year">5th Year</option>
+          </select>
         </div>
         <div class="mb-4">
           <label for="status">Status:</label>
