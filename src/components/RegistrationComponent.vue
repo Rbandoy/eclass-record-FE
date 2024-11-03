@@ -365,7 +365,7 @@ export default {
         };
 
         try {
-          const response = await axios.post('http://localhost:1337/api/auth/local/register', data, {
+          const response = await axios.post('https://api.nemsu-grading.online/api/auth/local/register', data, {
             headers: {
               'Content-Type': 'application/json'
             }
@@ -404,7 +404,7 @@ export default {
 
         try {
           isLoading.value = true
-          const response = await axios.post('http://localhost:1337/api/students', {data: studentData}, {
+          const response = await axios.post('https://api.nemsu-grading.online/api/students', {data: studentData}, {
             headers: {
               'Content-Type': 'application/json'
             }

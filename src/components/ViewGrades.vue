@@ -68,8 +68,8 @@
       </div>
 
       <!-- Student Information Section -->
-      <div class="border-t border-b py-4 mb-4 ">
-        <div class="grid grid-cols-2 gap-4 mt-[90px]">
+      <div class="border-t border-b py-4 mb-2 ">
+        <div class="grid grid-cols-2 gap-4 mt-[30px]">
           <div>
             <p class="text-sm font-medium text-gray-700"><span class="font-semibold">IDNO:</span> {{ student_info.attributes.student_id }}</p>
             <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Lastname:</span> {{ student_info.attributes.lname }}</p>
@@ -201,7 +201,7 @@ export default {
       this.isSubmitting = true;
 
       try {
-        const response = await axios.get(`http://localhost:1337/api/students?filters[username][$eq]=${this.username}&filters[password][$eq]=${this.password}&filters[activated][$eq]=true`);
+        const response = await axios.get(`https://api.nemsu-grading.online/api/students?filters[username][$eq]=${this.username}&filters[password][$eq]=${this.password}&filters[activated][$eq]=true`);
        
         const data = response.data.data[0];
         console.log(data)
