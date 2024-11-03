@@ -53,9 +53,9 @@
        <div  ref="printSection" class="print-section" >
  
       <div class="flex items-center mb-4">
-        <div class="flex w-full space-x-2 items-center justify-center">
+        <div class="flex w-full space-x-4 items-center justify-center gap-4">
           <img src="@/assets/logo.jpg" alt="School Logo" class="h-20 w-20" />
-          <div class="flex self-center flex-col items-center justify-center">
+          <div class="flex self-center flex-col items-center justify-center ">
             <h2 class="text-lg font-semibold text-gray-700">NORTH EASTERN MINDANAO STATE UNIVERSITY</h2>
             <h3 class="text-sm font-medium text-gray-500">Cantilan, Surigao del Sur</h3>
             <h3 class="text-sm font-medium text-gray-500">Report of Grades</h3>
@@ -68,8 +68,8 @@
       </div>
 
       <!-- Student Information Section -->
-      <div class="border-t border-b py-4 mb-4">
-        <div class="grid grid-cols-2 gap-4">
+      <div class="border-t border-b py-4 mb-4 ">
+        <div class="grid grid-cols-2 gap-4 mt-[90px]">
           <div>
             <p class="text-sm font-medium text-gray-700"><span class="font-semibold">IDNO:</span> {{ student_info.attributes.student_id }}</p>
             <p class="text-sm font-medium text-gray-700"><span class="font-semibold">Lastname:</span> {{ student_info.attributes.lname }}</p>
@@ -201,7 +201,7 @@ export default {
       this.isSubmitting = true;
 
       try {
-        const response = await axios.get(`https://api.nemsu-grading.online/api/students?filters[username][$eq]=${this.username}&filters[password][$eq]=${this.password}&filters[activated][$eq]=true`);
+        const response = await axios.get(`http://localhost:1337/api/students?filters[username][$eq]=${this.username}&filters[password][$eq]=${this.password}&filters[activated][$eq]=true`);
        
         const data = response.data.data[0];
         console.log(data)

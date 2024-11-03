@@ -2,7 +2,7 @@
   <div class="table-container">
    
     <div class="flex flex-row gap-2"> 
-      <h1 class="bold text-lg">Active: <strong>{{ activeSchoolYear.sem }} SEM. A.Y.  {{ activeSchoolYear.year }} </strong></h1>
+      <small class="bold">Active: <strong>{{ activeSchoolYear.sem }} SEM. A.Y.  {{ activeSchoolYear.year }} </strong></small>
     
       <label for="file-select" class="file-select-label">Select Class Records:</label>
       <select id="file-select" v-model="selectedFile" @change="loadFile" class="file-select">
@@ -78,6 +78,7 @@ import 'handsontable/dist/handsontable.full.css';
 import { HyperFormula } from 'hyperformula';
 import axios from 'axios';
 import * as ExcelJS from 'exceljs';
+import { toast } from 'vue3-toastify';
 // Register Handsontable's modules
 registerAllModules();
 
@@ -90,7 +91,7 @@ export default defineComponent({
     const data = ref([]);
     const files = ref([]);
     const activeSchoolYear = ref('');
-    const selectedFile = ref(null);
+    const selectedFile = ref(null); 
     const zoomLevel = ref(1); // New state variable for zoom level
     const loading = ref(false); // New loading state
     const isRenameModalVisible = ref(false);
@@ -130,6 +131,7 @@ export default defineComponent({
             hotInstance.setDataAtCell(row, nextCol, studentName  == "undefined" ? "": studentName);
             hotInstance.setDataAtCell(row, 27, studentName  == "undefined" ? "": studentName);
             hotInstance.setDataAtCell(row, 54, studentName  == "undefined" ? "": studentName);
+
           } catch (error) {
             console.error("Error loading data:", error);
             // Optional: Display error text or keep previous value 
@@ -144,7 +146,7 @@ export default defineComponent({
     const loadStudents = async (student_id) => {
       try { 
         const token = sessionStorage.getItem('jwt');
-        const response = await axios.get(`https://api.nemsu-grading.online/api/students?filters[student_id][$eq]=${student_id}`, {
+        const response = await axios.get(`http://localhost:1337/api/students?filters[student_id][$eq]=${student_id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -173,9 +175,8 @@ export default defineComponent({
       },
       width: '100%',
       height: '100%',
-      cells(row, col) {
-        const cellProperties = {};
-        console.log(row,col)
+      cells() {
+        const cellProperties = {}; 
         cellProperties.renderer = customCellRenderer;
         return cellProperties;
       },
@@ -186,7 +187,7 @@ export default defineComponent({
     
  
 
-    const openRenameModal = () => {
+    const openRenameModal = () => { 
       if (selectedFile.value) { 
         newFileName.value = selectedFile.value.name; // Pre-fill the current name
         isRenameModalVisible.value = true;
@@ -210,7 +211,7 @@ export default defineComponent({
         const config = {
           method: 'get',
           maxBodyLength: Infinity,
-          url: 'https://api.nemsu-grading.online/api/upload/files/'
+          url: 'http://localhost:1337/api/upload/files/'
         };
         const response = await axios.request(config);
         files.value = response.data.reduce((acc, cur) => {
@@ -231,7 +232,7 @@ export default defineComponent({
     const fetchDefaultExcel = async () => { 
       try {
           loading.value = true; // Start loading
-          const response = await fetch(`https://api.nemsu-grading.online/uploads/Book2_3a0d84028b.xlsx`);
+          const response = await fetch(`http://localhost:1337/uploads/default_excel_4f555e781f.xlsx@23`);
           if (!response.ok) throw new Error('Network response was not ok');
           const arrayBuffer = await response.arrayBuffer();
           const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -245,12 +246,9 @@ export default defineComponent({
 
         // Access the first worksheet
         const worksheet = workbook2.worksheets[0];
-
-              console.log(worksheet.model.rows)
-            
+ 
               const processedData = processMergedCells(excelData, merges);
-              addFormula(worksheet, processedData.data)
-              console.log("default", processedData)
+              addFormula(worksheet, processedData.data) 
               data.value = processedData.data;
               hotSettings.value.mergeCells = processedData.mergeCells;
               const hotInstance = hotTableRef.value.hotInstance;
@@ -280,7 +278,7 @@ export default defineComponent({
         // try {
           try {
           loading.value = true; // Start loading
-          const response = await fetch(`https://api.nemsu-grading.online${selectedFile.value.url}`);
+          const response = await fetch(`http://localhost:1337${selectedFile.value.url}`);
           if (!response.ok) throw new Error('Network response was not ok');
           const arrayBuffer = await response.arrayBuffer();
           const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -294,16 +292,13 @@ export default defineComponent({
 
         // Access the first worksheet
         const worksheet = workbook2.worksheets[0];
-
-              console.log(worksheet.model.rows)
+ 
             
               const processedData = processMergedCells(excelData, merges);
-              addFormula(worksheet, processedData.data)
-              console.log("default", processedData)
+              addFormula(worksheet, processedData.data) 
               data.value = processedData.data;
               hotSettings.value.mergeCells = processedData.mergeCells;
-              const hotInstance = hotTableRef.value.hotInstance;
-              selectedFile.value = response
+              const hotInstance = hotTableRef.value.hotInstance; 
               if (hotInstance) {
                 hotInstance.loadData(processedData.data);
                 hotInstance.updateSettings({ cells: hotSettings.value.cells });
@@ -321,7 +316,7 @@ export default defineComponent({
               loading.value = false 
           }
         //   loading.value = true; // Start loading
-        //   const response = await fetch(`https://api.nemsu-grading.online${selectedFile.value.url}`);
+        //   const response = await fetch(`http://localhost:1337${selectedFile.value.url}`);
         //   if (!response.ok) throw new Error('Network response was not ok');
 
         //   const arrayBuffer = await response.arrayBuffer();
@@ -358,7 +353,7 @@ export default defineComponent({
       let config = {
           method: 'get',
           maxBodyLength: Infinity,
-          url: 'https://api.nemsu-grading.online/api/school-years?filters[active][$eq]=active',
+          url: 'http://localhost:1337/api/school-years?filters[active][$eq]=active',
           headers: { 
             'Content-Type': 'application/json', 
             'Authorization': `Bearer ${sessionStorage.getItem("jwt")}`
@@ -448,7 +443,7 @@ const saveToExcel = async () => {
 
   try {
     try {
-      await axios.delete(`https://api.nemsu-grading.online/api/upload/files/${selectedFile.value.id}`)
+      await axios.delete(`http://localhost:1337/api/upload/files/${selectedFile.value.id}`)
     } catch (error) {
       // 
     }
@@ -456,7 +451,7 @@ const saveToExcel = async () => {
     
     
     // Make an API request to Strapi to save the file
-    const response = await fetch('https://api.nemsu-grading.online/api/upload/', {
+    const response = await fetch('http://localhost:1337/api/upload/', {
       method: 'POST',
       body: formData,
       // Uncomment if you need to send authorization token
@@ -482,9 +477,12 @@ const saveToExcel = async () => {
   }
 };
 
+
+ 
+
 const deleteFile = async () => {
   try {
-      await axios.delete(`https://api.nemsu-grading.online/api/upload/files/${selectedFile.value.id}`)
+      await axios.delete(`http://localhost:1337/api/upload/files/${selectedFile.value.id}`)
     } catch (error) {
       // 
     } finally { 
@@ -503,10 +501,10 @@ const deleteFile = async () => {
 
 const submitToAdmin = async () => {
   
-    const semester = data.value[8][6].charAt(0); 
-    const schoolYear = data.value[8][6].match(/\d{4}-\d{4}/)[0];
-
-    const response = await axios.get(`https://api.nemsu-grading.online/api/school-years?filters[year][$eq]=${schoolYear}&filters[sem][$eq]=${semester}&filters[active][$eq]=true`, {
+  
+    const semester = data.value[0][21].charAt(0); 
+    const schoolYear = data.value[1][21]; 
+    const response = await axios.get(`http://localhost:1337/api/school-years?filters[year][$eq]=${schoolYear}&filters[sem][$eq]=${semester}&filters[active][$eq]=true`, {
       headers: {
         'Authorization': `Bearer ${sessionStorage.getItem('jwt')}`
       }
@@ -515,55 +513,55 @@ const submitToAdmin = async () => {
     if (response.data.data.length < 1) {
       alert("School year not active")
       return
-    }
-
+    } 
   const students = data.value.reduce((acc, cur, index) => {
-    if (index > 11 && ["PASSED", "FAILED", "INC", "N/A"].includes(cur[7])) {
-
-      const semester = data.value[8][6].charAt(0); 
-      const schoolYear = data.value[8][6].match(/\d{4}-\d{4}/)[0]; 
- 
-
-      acc.push({
-        subject_no: data.value[8][2],
-        semester: semester,
-        sy: schoolYear,
-        description: data.value[9][2],
-        "course": data.value[10][2],
-        instructor: data.value[10][6],
-        student_id: cur[0],
-        student_name: cur[1],
-        mtg: cur[2],
-        ftg: cur[3],
-        final: cur[4],
-        remarks: cur[7],
-        grade: cur[5]
-      })
+  
+    try {
+      if (index > 9 && ["PASSED", "FAILED", "INC", "N/A"].includes(String(hotTableRef.value.hotInstance.getDataAtCell(index, 58)))) {
+        acc.push({
+          subject_no: data.value[3][4],
+          semester: semester,
+          sy: schoolYear,
+          description: data.value[3][8],
+          "course": data.value[3][4],
+          instructor: data.value[3][1],
+          student_id: cur[0],
+          student_name: cur[1], 
+          ftg: String(hotTableRef.value.hotInstance.getDataAtCell(index, 56)),
+          final: String(hotTableRef.value.hotInstance.getDataAtCell(index, 57)),
+          remarks: String(hotTableRef.value.hotInstance.getDataAtCell(index, 58)),
+          grade:  String(hotTableRef.value.hotInstance.getDataAtCell(index, 57)),
+        })
+      }
+    } catch (error) { 
+      // 
     }
 
     return acc;
-  }, [])
-
+  }, []) 
   students.forEach(async (data) => {
+   
   try {
     const token = sessionStorage.getItem("jwt")
-     await axios.post('https://api.nemsu-grading.online/api/grade-masterlists', {data}, {
+     await axios.post('http://localhost:1337/api/grade-masterlists', {data}, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
+
+
     
   } catch (error) {
     console.error(`Failed to create entry: ${error}`);
   }
 });
  
-
-  if (!selectedFile.value.name.includes("FRating")) {
-    alert("not final rating")
-    return
-  }
+  toast.success("Grades successfully submitted")
+  // if (!selectedFile.value.name.includes("FRating")) {
+  //   alert("not final rating")
+  //   return
+  // }
   if (selectedFile.value.length == 0) return
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(data.value);
@@ -593,8 +591,8 @@ const submitToAdmin = async () => {
  formData2.append('files', blob, selectedFile.value.name+""+extension.value); // Change filename if needed
  
   try {
-    try {
-      await axios.delete(`https://api.nemsu-grading.online/api/upload/files/${selectedFile.value.id}`)
+    try { 
+      await axios.delete(`http://localhost:1337/api/upload/files/${selectedFile.value.id}`)
     } catch (error) {
       // 
     }
@@ -602,14 +600,14 @@ const submitToAdmin = async () => {
     
     
     // Make an API request to Strapi to save the file
-    const response = await fetch('https://api.nemsu-grading.online/api/upload/', {
+    const response = await fetch('http://localhost:1337/api/upload/', {
       method: 'POST',
       body: formData,
       // Uncomment if you need to send authorization token
       // headers: { 'Authorization': `Bearer ${token}` },
     });
 
-    await fetch('https://api.nemsu-grading.online/api/upload/', {
+    await fetch('http://localhost:1337/api/upload/', {
       method: 'POST',
       body: formData2,
       // Uncomment if you need to send authorization token
@@ -661,13 +659,10 @@ const s2ab = (s) => {
 
     const addFormula = (worksheet, data) => {
       const cellStyles = [];
-      worksheet.eachRow((row) => {
-        console.log(`Row ${row}:`);
+      worksheet.eachRow((row) => { 
         row.eachCell((cell) => {
-            // const cellValue = cell.value;
-            console.log(row,cell.col, cell.row) 
-            if (cell.formula ) {
-              console.log(data[cell.row])
+            // const cellValue = cell.value; 
+            if (cell.formula ) { 
               data[cell.row - 1][cell.col - 1] = `=${cell.formula}`
             } 
 
@@ -684,8 +679,7 @@ const s2ab = (s) => {
               };
             }
             if (cell.fill) {
-
-        console.log("fill",cell.fill)
+ 
               // const fillColor = cell.fill.fgColor ? `#${cell.fill.fgColor}` : undefined;
               cellStyle.backgroundColor = cell.fill.bgColor;
             }
@@ -702,10 +696,12 @@ const s2ab = (s) => {
  
   const customCellRenderer = (instance, td, row, col, prop, value, cellProperties) => {
     // Apply cell value
-    console.log(instance, prop, cellProperties, value)
+    console.debug(instance, prop, cellProperties, value)
     td.innerText = value; 
     // Apply background color
     // console.log(styles.value[row], row, styles.value[row].col, col)
+
+   
      styles.value.map((style) => {
       if (style.row == row && style.col == col) {
       // console.log("match", styles.value[row])

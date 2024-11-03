@@ -207,7 +207,7 @@ export default {
       try {
 
         const token = sessionStorage.getItem('jwt');
-        const response = await axios.get('https://api.nemsu-grading.online/api/school-years', {
+        const response = await axios.get('http://localhost:1337/api/school-years', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -220,7 +220,7 @@ export default {
     },
     async searchStudent() {
       if (this.searchQuery) {
-        const evaluateData = await axios.get(`https://api.nemsu-grading.online/api/evaluation/${this.searchQuery}`, {
+        const evaluateData = await axios.get(`http://localhost:1337/api/evaluation/${this.searchQuery}`, {
           headers: {
             'Authorization': `Bearer ${sessionStorage.getItem("jwt")}`
           }
@@ -293,7 +293,7 @@ export default {
 
         if (evalSubmit.length > 0) {
           console.log(evalSubmit);
-          await axios.post(`https://api.nemsu-grading.online/api/create-evaluation/`, { data: evalSubmit }, {
+          await axios.post(`http://localhost:1337/api/create-evaluation/`, { data: evalSubmit }, {
             headers: {
               'Authorization': `Bearer ${sessionStorage.getItem("jwt")}`
             }
