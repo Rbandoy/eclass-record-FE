@@ -31,6 +31,16 @@
       <!-- Instructor Fields -->
       <div class="text-[12px] h-[30rem] px-5 overflow-auto border-b" v-if="isInstructor">
         <div class="mb-4">
+          <label for="idNo">Id Number</label>
+          <input
+            v-model="newInstructor.idNo"
+            id="idNo"
+            type="text"
+            class="input-field"
+            required
+          />
+        </div>
+        <div class="mb-4">
           <label for="email">Username</label>
           <input
             v-model="newInstructor.username"
@@ -296,6 +306,7 @@ export default {
     const password = ref('');
     const accountType = ref('student');
     const newInstructor = ref({
+      idNo: '',
       username: '',
       fname: '',
       lname: '',

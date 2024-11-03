@@ -17,14 +17,46 @@
         placeholder="Search students..."
         class="block p-2 border border-gray-300 rounded-md w-[300px]"
       />
+      <div class="flex flex-col mb-4 mt-2">
+        <span class="font-semibold text-lg mb-2">Group By: Year</span>
+        <div class="flex flex-wrap">
+          <label class="flex items-center mr-6 cursor-pointer">
+            <input type="radio" value="" v-model="groupQuery" class="form-radio text-blue-600 h-4 w-4 mr-2" />
+            <span class="text-gray-700">None</span>
+          </label>
+          <label class="flex items-center mr-6 cursor-pointer">
+            <input type="radio" value="1st year" v-model="groupQuery" class="form-radio text-blue-600 h-4 w-4 mr-2" />
+            <span class="text-gray-700">1st year</span>
+          </label>
+          <label class="flex items-center mr-6 cursor-pointer">
+            <input type="radio" value="2nd year" v-model="groupQuery" class="form-radio text-blue-600 h-4 w-4 mr-2" />
+            <span class="text-gray-700">2nd year</span>
+          </label>
+          <label class="flex items-center mr-6 cursor-pointer">
+            <input type="radio" value="3rd year" v-model="groupQuery" class="form-radio text-blue-600 h-4 w-4 mr-2" />
+            <span class="text-gray-700">3rd year</span>
+          </label>
+          <label class="flex items-center mr-6 cursor-pointer">
+            <input type="radio" value="4th year" v-model="groupQuery" class="form-radio text-blue-600 h-4 w-4 mr-2" />
+            <span class="text-gray-700">4th year</span>
+          </label>
+          <label class="flex items-center mr-6 cursor-pointer">
+            <input type="radio" value="5th year" v-model="groupQuery" class="form-radio text-blue-600 h-4 w-4 mr-2" />
+            <span class="text-gray-700">5th year</span>
+          </label>
+        </div>
+      </div>
+      
+      
     </div>
 
     <!-- Student List -->
-    <div v-if="filteredStudents.length" class="mb-6">
+    <div v-if="filteredStudents.length" class="mb-6 h-[550px] bg-yellow-50 overflow-auto">
       <table class="min-w-full bg-white border border-gray-200 rounded-lg text-[12px]">
         <thead>
           <tr class="border-b">
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Student ID</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Year</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Last Name</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">First Name</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Middle Name</th>
@@ -42,6 +74,7 @@
           :class="{'bg-yellow-200': !student.attributes.activated}"
           v-for="student in filteredStudents" :key="student.id" class="border-b">
             <td class="p-4">{{ student.attributes.student_id }}</td>
+            <td class="p-4">{{ student.attributes.year }}</td>
             <td class="p-4">{{ student.attributes.lname }}</td>
             <td class="p-4">{{ student.attributes.fname }}</td>
             <td class="p-4">{{ student.attributes.mname }}</td>
@@ -156,6 +189,18 @@
           </select>
         </div>
 
+        <!-- Year Level -->
+        <div class="space-y-1">
+          <label for="year" class="block text-base font-semibold text-gray-700">Year Level</label>
+          <select id="year" v-model="studentForm.year" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500">
+            <option value="1st Year">1st year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+            <option value="5th Year">5th Year</option>
+          </select>
+        </div>
+
         <!-- Activation -->
         <div class="space-y-1">
           <label for="activated" class="block text-base font-semibold text-gray-700">Activated</label>
@@ -249,10 +294,12 @@ const studentForm = ref({
   activated: '',
   username: '',
   password: '',
-  telegram:''
+  telegram:'',
+  year: ''
 });
 const currentStudentId = ref(null);
 const searchQuery = ref('');
+const groupQuery = ref('');
 
 // Fetch students from API
 const loadStudents = async () => {
@@ -365,7 +412,8 @@ const closeModal = () => {
 
 // Filtered and sorted students based on search query and activated status
 const filteredStudents = computed(() => {
-  const query = searchQuery.value.toLowerCase();
+  const searchQueryValue = searchQuery.value.toLowerCase();
+  const groupQueryValue = groupQuery.value.toLowerCase();
 
   // Create a new sorted array to avoid mutating the original array
   const sortedStudents = [...students.value].sort((a, b) => {
@@ -378,11 +426,19 @@ const filteredStudents = computed(() => {
     }
   });
 
-  // Apply search query filtering after sorting
-  return sortedStudents.filter(student => 
-    JSON.stringify(student.attributes).toLowerCase().includes(query)
-  );
+  // Apply search query filtering
+  return sortedStudents.filter(student => {
+    const matchesSearch = JSON.stringify(student.attributes)
+      .toLowerCase()
+      .includes(searchQueryValue);
+
+    const matchesGroup = groupQueryValue === "" || 
+      student.attributes.year.toLowerCase().includes(groupQueryValue);
+    console.log(matchesGroup)
+    return matchesSearch && matchesGroup; // Both conditions must be true
+  });
 });
+
 
 
 const viewGrades = async (student) => {

@@ -30,6 +30,11 @@
         </div>
 
         <div class="flex flex-col">
+          <label for="idNo" class="text-sm font-medium text-gray-700">Id No:</label>
+          <input type="text" id="idNo" class="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" v-model="profile.idNo" :disabled="!isEditing" />
+        </div>
+
+        <div class="flex flex-col">
           <label for="username" class="text-sm font-medium text-gray-700">Username:</label>
           <input type="text" id="username" class="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" v-model="profile.username" :disabled="!isEditing" />
         </div>
@@ -114,6 +119,7 @@ export default {
       profileId: '',
       token: '',
       profile: {
+        idNo: '',
         username: '',
         email: '',
         firstName: '',
