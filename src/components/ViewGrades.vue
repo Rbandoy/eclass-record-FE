@@ -5,7 +5,7 @@
       <h2 class="text-2xl font-semibold text-gray-700 text-center mb-6">Login</h2>
       <form @submit.prevent="UserLogin" class="space-y-4">
         <div>
-          <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+          <label for="username" class="block text-sm font-medium text-gray-700">Student Id</label>
           <input
             v-model="username"
             id="username"
@@ -227,7 +227,7 @@ export default {
       this.isSubmitting = true;
 
       try {
-        const response = await axios.get(`https://api.nemsu-grading.online/api/students?filters[username][$eq]=${this.username}&filters[password][$eq]=${this.password}&filters[activated][$eq]=true`);
+        const response = await axios.get(`https://api.nemsu-grading.online/api/students?filters[student_id][$eq]=${this.username}&filters[password][$eq]=${this.password}&filters[activated][$eq]=true`);
        
         const data = response.data.data[0];
         console.log(data)
