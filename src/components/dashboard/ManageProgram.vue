@@ -21,7 +21,7 @@
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Semester</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">School Year</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Year Level</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Status</th>
+            <!-- <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Status</th> -->
             <th v-if="role === 'admin'" class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-center font-medium text-gray-700 uppercase text-[12px]">Actions</th>
           </tr>
         </thead>
@@ -35,7 +35,7 @@
             <td class="px-6  whitespace-nowrap">{{ program.attributes.sem }}</td>
             <td class="px-6 whitespace-nowrap">{{ program.attributes.sy }}</td>
             <td class="px-6  whitespace-nowrap">{{ program.attributes.year }}</td>
-            <td class="px-6  whitespace-nowrap">{{ program.attributes.status }}</td>
+            <!-- <td class="px-6  whitespace-nowrap">{{ program.attributes.status }}</td> -->
             <td v-if="role === 'admin'" class="px-6 py-4 whitespace-nowrap text-center">
               <button @click="openEditModal(program)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Edit</button>
               <button @click="deleteProgram(program.id)" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 ml-2">Delete</button>

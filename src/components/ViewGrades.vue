@@ -160,6 +160,32 @@
         <p class="text-left mt-12 text-sm   text-gray-700  ">Evaluated By: <span class="uppercase underline">{{ evaluation[0]?.evaluator.lname }}, {{ evaluation[0]?.evaluator.fname }}</span></p>
         <small class="text-left mt-4 text-xs   text-gray-700">Date: {{ new Date(Date.now()).getFullYear() }}/{{ new Date(Date.now()).getMonth() }}/{{ new Date(Date.now()).getDate() }}</small>
       </div>
+      <!-- footer -->
+      <div class="flex items-center justify-between mb-4 border-t-2 border-blue-500 mt-10">
+        <div class="flex self-center flex-col items-left justify-left w-[300px]">
+          <!-- <h2 class="text-lg font-semibold text-gray-700">NORTH EASTERN MINDANAO STATE UNIVERSITY</h2> -->
+          <div class="flex-row flex gap-2   items-center"> 
+              <svg width="10" height="10" version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve" fill="#e25555" stroke="#e25555"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#c17689" d="M32,0C18.746,0,8,10.746,8,24c0,5.219,1.711,10.008,4.555,13.93c0.051,0.094,0.059,0.199,0.117,0.289l16,24 C29.414,63.332,30.664,64,32,64s2.586-0.668,3.328-1.781l16-24c0.059-0.09,0.066-0.195,0.117-0.289C54.289,34.008,56,29.219,56,24 C56,10.746,45.254,0,32,0z M32,32c-4.418,0-8-3.582-8-8s3.582-8,8-8s8,3.582,8,8S36.418,32,32,32z"></path> </g></svg> 
+            <p class="text-sm font-medium text-gray-500 w-[200px]">Cantilan, Surigao del Sur 8317</p>
+          </div>
+          <div class="flex-row flex gap-2  items-center"> 
+            <svg width="10" height="10" viewBox="0 0 15 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>call [#192]</title> <desc>Created with Sketch.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Dribbble-Light-Preview" transform="translate(-103.000000, -7321.000000)" fill="#9b7878"> <g id="icons" transform="translate(56.000000, 160.000000)"> <path d="M61.7302966,7173.99596 C61.2672966,7175.40296 59.4532966,7176.10496 58.1572966,7175.98796 C56.3872966,7175.82796 54.4612966,7174.88896 52.9992966,7173.85496 C50.8502966,7172.33496 48.8372966,7169.98396 47.6642966,7167.48896 C46.8352966,7165.72596 46.6492966,7163.55796 47.8822966,7161.95096 C48.3382966,7161.35696 48.8312966,7161.03996 49.5722966,7161.00296 C50.6002966,7160.95296 50.7442966,7161.54096 51.0972966,7162.45696 C51.3602966,7163.14196 51.7112966,7163.84096 51.9072966,7164.55096 C52.2742966,7165.87596 50.9912966,7165.93096 50.8292966,7167.01396 C50.7282966,7167.69696 51.5562966,7168.61296 51.9302966,7169.09996 C52.6632966,7170.05396 53.5442966,7170.87696 54.5382966,7171.50296 C55.1072966,7171.86196 56.0262966,7172.50896 56.6782966,7172.15196 C57.6822966,7171.60196 57.5872966,7169.90896 58.9912966,7170.48196 C59.7182966,7170.77796 60.4222966,7171.20496 61.1162966,7171.57896 C62.1892966,7172.15596 62.1392966,7172.75396 61.7302966,7173.99596 C61.4242966,7174.92396 62.0362966,7173.06796 61.7302966,7173.99596" id="call-[#192]"> </path> </g> </g> </g> </g></svg>
+          <p class="text-sm font-medium text-gray-500">086-212-2723</p>
+          </div>
+          <div class="flex-row flex gap-2  items-center"> 
+            <svg width="10" height="10"  viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" stroke-width="3" stroke="#766060" fill="none"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M39.93,55.72A24.86,24.86,0,1,1,56.86,32.15a37.24,37.24,0,0,1-.73,6"></path><path d="M37.86,51.1A47,47,0,0,1,32,56.7"></path><path d="M32,7A34.14,34.14,0,0,1,43.57,30a34.07,34.07,0,0,1,.09,4.85"></path><path d="M32,7A34.09,34.09,0,0,0,20.31,32.46c0,16.2,7.28,21,11.66,24.24"></path><line x1="10.37" y1="19.9" x2="53.75" y2="19.9"></line><line x1="32" y1="6.99" x2="32" y2="56.7"></line><line x1="11.05" y1="45.48" x2="37.04" y2="45.48"></line><line x1="7.14" y1="32.46" x2="56.86" y2="31.85"></line><path d="M53.57,57,58,52.56l-8-8,4.55-2.91a.38.38,0,0,0-.12-.7L39.14,37.37a.39.39,0,0,0-.46.46L42,53.41a.39.39,0,0,0,.71.13L45.57,49Z"></path></g></svg>
+            <p class="text-xs text-gray-500">www.nemsu.du.ph</p>
+            </div>
+        </div>
+        <div class="flex w-full items-center justify-end gap-4">
+          <img src="@/assets/Picture3.png" alt="School Logo" class="h-[50px] w-30" /> 
+          <img src="@/assets/Picture2.png" alt="School Logo" class="h-[50px] w-30" /> 
+          <img src="@/assets/Picture1.png" alt="School Logo" class="h-[50px] w-30" /> 
+        </div>
+        <!-- <div class="text-right">
+          <p class="text-xs text-gray-500">Printed on: {{ new Date().toLocaleDateString() }}</p>
+        </div> -->
+      </div>
       </div>
 
       <!-- Print Button -->
@@ -250,7 +276,7 @@ export default {
       console.log(pdfHeight)
       // Add the image to the PDF
       pdf.addImage(imgData, 'PNG', 0, 0, imgPdfWidth, imgPdfHeight);
-      pdf.save(`${this.activeTab}-${this.evaluation[0].school_year}-${this.evaluation[0].sem}.pdf`); // Save the PDF with a name
+      pdf.save(`${this.activeTab}-${this.evaluation[0]?.school_year}-${this.evaluation[0]?.sem}.pdf`); // Save the PDF with a name
     }, 
   getGPA(){
     const grades = this.grades;
