@@ -102,6 +102,7 @@ export default defineComponent({
     const focusedCell = reactive({ row: null, col: null });
 
     const onCellSelect = (row, col) => {
+      console.log(row,col)
       focusedCell.row = row;
       focusedCell.col = col; 
     };
@@ -532,6 +533,7 @@ const submitToAdmin = async () => {
           final: String(hotTableRef.value.hotInstance.getDataAtCell(index, 57)),
           remarks: String(hotTableRef.value.hotInstance.getDataAtCell(index, 58)),
           grade:  String(hotTableRef.value.hotInstance.getDataAtCell(index, 57)),
+          section: String(hotTableRef.value.hotInstance.getDataAtCell(3, 47)),
         })
       }
     } catch (error) { 
