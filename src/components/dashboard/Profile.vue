@@ -200,7 +200,7 @@ export default {
       formData.append('files', file, profileId+".png"); // Change filename if needed
 
 
-      const response = await fetch('https://api.nemsu-grading.online/api/upload/', {
+      await fetch('https://api.nemsu-grading.online/api/upload/', {
       method: 'POST',
       body: formData,
       // Uncomment if you need to send authorization token
@@ -208,7 +208,7 @@ export default {
       });
       this.fetchFiles()
       toast.success("Profile Picture Updated")
-      console.log(response)
+      this.selectedFile = null;
     },  
     async fetchFiles() { 
       // const token = sessionStorage.getItem('jwt');
