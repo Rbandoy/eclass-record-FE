@@ -35,11 +35,7 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Profile Picture Upload Field -->
-        
-
-        
-      
+        <!-- Profile Picture Upload Field --> 
         <div class="flex flex-col">
           <label for="idNo" class="text-sm font-medium text-gray-700">Id No:</label>
           <input type="text" id="idNo" class="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" v-model="profile.idNo" :disabled="!isEditing" />
@@ -162,7 +158,7 @@ export default {
     this.profileId = profileData.id;
     this.token = sessionStorage.getItem('jwt');  
     
-      // this.loadProfile(); 
+      this.loadProfile(); 
       this.fetchFiles();
   },
   methods: {
@@ -291,7 +287,31 @@ export default {
   } finally {
       this.isLoading = false
     }
-}
+},
+async loadProfile() { 
+    try {
+       this.isLoading = true
+      const response = await axios.get(`https://api.nemsu-grading.online/api/users/${this.profileId}`, {
+        headers: {
+          'Authorization': `Bearer ${this.token}`
+        }
+      });
+
+      if (response.status === 200) {
+        this.profile = { ...response.data };
+        this.originalProfile = { ...this.profile }; // Save original profile data
+        sessionStorage.setItem('profile', JSON.stringify(response.data));
+        this.profilePicture = this.profile.profilePic || 'https://via.placeholder.com/100?text=Profile+Pic'; // Default placeholder image
+      } else {
+        alert('Failed to load profile.');
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      alert('Error loading profile.');
+    } finally {
+      this.isLoading = false
+    }
+    },
   }
 }
 </script>
