@@ -13,8 +13,8 @@
       <table class="min-w-full bg-white border border-gray-200 text-[12px]">
         <thead>
           <tr>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Code</th>
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Program</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Course Code</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left  font-medium text-gray-700 uppercase text-[12px]">Descriptive Title</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Lecture</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Laboratory</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Units</th>
@@ -105,7 +105,7 @@
               <option value="2">2nd year</option>
               <option value="3">3rd year</option>
               <option value="4">4th year</option>
-              <option value="5">5th year</option>
+              <!-- <option value="5">5th year</option> -->
             </select>
           </div>
 
