@@ -143,7 +143,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="evals in evaluation" :key="evals.id" class="hover:bg-gray-100">
+            <tr v-for="evals in filterEvaluation" :key="evals.id" class="hover:bg-gray-100">
               <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.subject_code }}</td>
               <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.section }}</td>
               <td class="px-2 py-2 border text-sm text-gray-600">{{ evals.description }}</td>
@@ -300,8 +300,15 @@ export default {
   computed: {
     filteredGrades() {
       const filter = this.selectedSchoolYear.split("|")[0]
+      const sem = this.selectedSchoolYear.split("|")[1]
       console.log(this.selectedSchoolYear)
-      return this.grades.filter(grade => grade.sy === filter);
+      return this.grades.filter(grade => grade.sy === filter && grade.semester == sem);
+    },
+    filterEvaluation() {
+      const filter = this.selectedSchoolYear.split("|")[0]
+      const sem = this.selectedSchoolYear.split("|")[1]
+      console.log(this.selectedSchoolYear)
+      return this.evaluation.filter((evaluate) => evaluate.school_year == filter && evaluate.sem == sem)
     }
   }
 };
