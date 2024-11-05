@@ -261,8 +261,9 @@ export default {
     }
 
     // Append profile picture if available
-    if (this.profilePic) { 
-      formData.append('profilePicture', this.profilePic);
+    if (this.profile.profilePicture) { 
+      delete this.profile.profilePicture
+      // formData.append('profilePicture', this.profilePic);
     } 
     const response = await axios.put(`https://api.nemsu-grading.online/api/users/${this.profileId}`, formData, {
       headers: {
