@@ -49,6 +49,13 @@
           </li>
         </ul>
       </div>
+      <div class="flex-row flex gap-1 items-center justify-start mb-5">
+        <label for="year" class="w-[150px]">Select School Year:</label>
+        <select v-model="selectedSchoolYear" id="year" required class="mt-1 block py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+          <option v-for="schoolYear in school_year" :key="schoolYear.id" :value="schoolYear.year+'|'+schoolYear.sem">{{ schoolYear.year+ ' - Sem: '+schoolYear.sem }}</option>
+        </select>
+      </div>
+      
       <!-- Header Section -->
        <div  ref="printSection" class="print-section" >
  
@@ -59,7 +66,7 @@
             <h2 class="text-lg font-semibold text-gray-700">NORTH EASTERN MINDANAO STATE UNIVERSITY</h2>
             <h3 class="text-sm font-medium text-gray-500">Cantilan, Surigao del Sur</h3>
             <h3 class="text-sm font-medium text-gray-500">Report of Grades</h3>
-            <p class="text-xs text-gray-500">SY: {{ school_year?.year }} Term: {{ school_year?.sem }}</p>
+            <p class="text-xs text-gray-500">SY: {{ selectedSchoolYear.split("|")[0] }} Term: {{ selectedSchoolYear.split("|")[1] }}</p>
           </div>
         </div>
         <!-- <div class="text-right">
@@ -102,7 +109,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="grade in grades" :key="grade.id" class="hover:bg-gray-100">
+            <tr v-for="grade in filteredGrades" :key="grade.id" class="hover:bg-gray-100">
               <td class="px-2 py-2 border text-sm text-gray-600">{{ grade.subject_no }}</td>
               <td class="px-2 py-2 border text-sm text-gray-600">{{ grade.section }}</td>
               <td class="px-2 py-2 border text-sm text-gray-600">{{ grade.description }}</td>
@@ -219,7 +226,8 @@ export default {
       student_info: null,
       evaluation: null,
       activeTab: 'grades', 
-      school_year: null
+      school_year: null,
+      selectedSchoolYear: ''
     };
   },
   methods: {
@@ -234,6 +242,7 @@ export default {
         this.student_info = data;
         this.grades = data.grades;
         this.evaluation = data.active_evaluation;
+        console.log(data)
         this.school_year = data.school_year;
         console.log(this.evaluation)
         this.getGPA()
@@ -278,15 +287,22 @@ export default {
       pdf.addImage(imgData, 'PNG', 0, 0, imgPdfWidth, imgPdfHeight);
       pdf.save(`${this.activeTab}-${this.evaluation[0]?.school_year}-${this.evaluation[0]?.sem}.pdf`); // Save the PDF with a name
     }, 
-  getGPA(){
-    const grades = this.grades;
-    console.log(grades.length)
-    const numberOfSubject = grades.length
-    const totalGrades = grades.reduce((acc, cur) => acc + Number(cur.grade),0)
-    const totalGPA = totalGrades/numberOfSubject;
+    getGPA(){
+      const grades = this.grades;
+      console.log(grades.length)
+      const numberOfSubject = grades.length
+      const totalGrades = grades.reduce((acc, cur) => acc + Number(cur.grade),0)
+      const totalGPA = totalGrades/numberOfSubject;
 
-    return Number(totalGPA).toFixed(2);
-  }
+      return Number(totalGPA).toFixed(2);
+    }
+  }, 
+  computed: {
+    filteredGrades() {
+      const filter = this.selectedSchoolYear.split("|")[0]
+      console.log(this.selectedSchoolYear)
+      return this.grades.filter(grade => grade.sy === filter);
+    }
   }
 };
 </script>
