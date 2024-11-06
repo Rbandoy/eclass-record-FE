@@ -103,7 +103,7 @@
                 Cantilan, Surigao del Sur
               </h3>
               <h3 class="text-sm font-medium text-gray-500">
-                Report of Grades
+                Certification Of Registration
               </h3>
               <p class="text-xs text-gray-500">
                 SY: {{ selectedSchoolYear.split("|")[0] }} Term:
