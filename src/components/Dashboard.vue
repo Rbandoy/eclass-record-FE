@@ -16,6 +16,7 @@
         
           <li>
             <router-link
+              v-if="role !== 'evaluator'"
               to="/dashboard/profile"
               :class="['block px-4 py-2 rounded', { 'bg-white text-black': isActive('/dashboard/profile'), 'text-gray-200 hover:bg-gray-700': !isActive('/dashboard/profile') }]"
             >
