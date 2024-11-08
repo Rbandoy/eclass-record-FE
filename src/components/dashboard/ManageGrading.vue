@@ -101,8 +101,7 @@ export default defineComponent({
 
     const focusedCell = reactive({ row: null, col: null });
 
-    const onCellSelect = (row, col) => {
-      console.log(row,col)
+    const onCellSelect = (row, col) => { 
       focusedCell.row = row;
       focusedCell.col = col; 
     };
@@ -114,7 +113,7 @@ export default defineComponent({
     for (const [row, col, oldValue, newValue] of changes) { 
       
       // Check if the value has changed in the target column (0 in this example)
-      if (oldValue !== newValue && col === 0 && row > 9) { 
+      if (oldValue !== newValue && col === 0 && row > 8) { 
 
         const nextCol = col + 1;
 
@@ -234,7 +233,7 @@ export default defineComponent({
     const fetchDefaultExcel = async () => { 
       try {
           loading.value = true; // Start loading
-          const response = await fetch(`https://api.nemsu-grading.online/uploads/Book2_8ac491a6c3.xlsx`);
+          const response = await fetch(`https://api.nemsu-grading.online/uploads/Book2_2ee6ee85b3.xlsx`);
           if (!response.ok) throw new Error('Network response was not ok');
           const arrayBuffer = await response.arrayBuffer();
           const workbook = XLSX.read(arrayBuffer, { type: 'array' });
