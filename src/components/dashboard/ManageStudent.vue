@@ -55,7 +55,7 @@
       <table class="min-w-full bg-white border border-gray-200 rounded-lg text-[12px]">
         <thead>
           <tr class="border-b">
-            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Student ID</th>
+            <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">ID No</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Year</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">Last Name</th>
             <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left font-medium text-gray-700 uppercase text-[12px]">First Name</th>
@@ -112,7 +112,7 @@
       <form class="overflow-auto h-[90%] p-3" @submit.prevent="isEditing ? updateStudent() : createStudent()">
         <!-- Student ID -->
         <div class="space-y-1">
-          <label for="student_id" class="block text-base font-semibold text-gray-700">Student ID</label>
+          <label for="student_id" class="block text-base font-semibold text-gray-700">ID No</label>
           <input type="text" id="student_id" v-model="studentForm.student_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500" :disabled="isEdit"/>
         </div>
 
@@ -237,7 +237,7 @@
     <transition name="fade">
       <div v-if="isGradesModalOpen" class="fixed w-[100%] inset-0 flex items-center p-2 justify-center bg-gray-800 bg-opacity-50 overflow-auto text-[12px]">
         <div class="bg-white p-6 mt-10 rounded-lg shadow-lg w-[60%] text-[12px]">
-          <h2 class="text-lg font-semibold mb-4">Grades for Student ID: {{ currentStudentId }}</h2>
+          <h2 class="text-lg font-semibold mb-4">Grades for Student ID No: {{ currentStudentId }}</h2>
           <table class="min-w-full bg-white border border-gray-200 rounded-lg text-[12px]">
             <thead>
               <tr class="border-b">

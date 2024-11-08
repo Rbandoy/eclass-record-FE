@@ -13,7 +13,7 @@
       <form @submit.prevent="UserLogin" class="space-y-4">
         <div>
           <label for="username" class="block text-sm font-medium text-gray-700"
-            >Student Id</label
+            >Student ID No.</label
           >
           <input
             v-model="username"

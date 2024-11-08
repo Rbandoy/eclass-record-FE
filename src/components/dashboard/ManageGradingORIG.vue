@@ -35,7 +35,7 @@
       <table class="min-w-full bg-white border border-gray-200 rounded-lg">
         <thead>
           <tr class="border-b">
-            <th class="p-4 text-left">Student ID</th>
+            <th class="p-4 text-left">ID No</th>
             <th class="p-4 text-left">Name</th>
             <th class="p-4 text-left">Email</th>
             <th class="p-4 text-left">Mobile</th>
@@ -77,7 +77,7 @@
           <h2 class="text-2xl font-semibold mb-4">Add Student</h2>
           <form @submit.prevent="addStudentToProgram">
             <div class="mb-4">
-              <label for="studentId" class="block text-sm font-medium text-gray-700">Student ID:</label>
+              <label for="studentId" class="block text-sm font-medium text-gray-700">ID No:</label>
               <input
                 type="text"
                 id="studentId"
@@ -643,7 +643,7 @@ const addStudentToProgram = async () => {
     // Check if the student exists
     const studentExists = await checkStudentExists(newStudentId.value);
     if (!studentExists[0]) {
-      alert('Student not found. Please check the student ID.');
+      alert('Student not found. Please check the student ID No.');
       return;  // Stop execution if the student does not exist
     }
 

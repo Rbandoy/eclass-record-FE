@@ -349,7 +349,7 @@
               <table class="text-[12px] w-full no-border">
                 <thead>
                   <tr>
-                    <th class="text-nowrap">Student Id</th>
+                    <th class="text-nowrap">ID No</th>
                     <th class="text-nowrap">Last Name</th>
                     <th class="text-nowrap">First Name</th>
                     <th class="text-nowrap">M.I.</th>
@@ -608,7 +608,7 @@ export default {
         });
         const { prospectos, student_info, grades } = evaluateData.data;
         if (student_info.length == 0 ) {
-          toast.info("Student Id not found");
+          toast.info("ID No not found");
           return
         }
         this.selectedStudent = student_info[0];

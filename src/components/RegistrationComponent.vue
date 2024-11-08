@@ -155,7 +155,7 @@
             />
           </div>
         <div class="mb-4">
-          <label for="student_id">Student ID:</label>
+          <label for="student_id">Student ID No.:</label>
           <input
             type="text"
             id="student_id"
