@@ -234,7 +234,7 @@ export default defineComponent({
     const fetchDefaultExcel = async () => { 
       try {
           loading.value = true; // Start loading
-          const response = await fetch(`https://api.nemsu-grading.online/uploads/Book2_6f79ab9cdb.xlsx`);
+          const response = await fetch(`https://api.nemsu-grading.online/uploads/Book2_8ac491a6c3.xlsx`);
           if (!response.ok) throw new Error('Network response was not ok');
           const arrayBuffer = await response.arrayBuffer();
           const workbook = XLSX.read(arrayBuffer, { type: 'array' });

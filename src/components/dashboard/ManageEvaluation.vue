@@ -171,13 +171,13 @@
           </p>
         </div>
 
-        <p class="text-left mt-12 text-sm text-gray-700">
-          Certified By:
-          <!-- <span class="uppercase underline"
-            >{{ selectSubjects[0]?.evaluator.lname }},
-            {{ selectSubjects[0]?.evaluator.fname }}</span
-          > -->
-        </p>
+        <div class="flex flex-row gap-1  justify-start">
+          <p class="text-left mt-12 text-sm text-gray-700">Certified By:</p>
+          <div class="flex flex-col mt-[70px] item-center justify-center">
+            <div class="w-[170px] border-b-2 h-1 bg-gray-400"></div>
+            <p class="text-xs self-center text-gray-500">Program Chair</p>
+          </div>
+        </div>
         <p class="text-left mt-12 text-sm text-gray-700">
           <!-- Evaluated By:
           <span class="uppercase underline"
@@ -502,7 +502,6 @@
             <option value="2">2nd Semester</option>
           </select>
         </div>
- 
         <div class="modal-actions">
           <Button
           @click="saveAsPDF"
@@ -543,6 +542,7 @@ export default {
       selectedStudent: null,
       selectSubjects: [],
       eval_school_year: null,
+      selectedStatus: null,
       eval_sem: null,
       selected_school_year: null,
       showModal: false // Control the visibility of the modal
@@ -819,7 +819,7 @@ th {
 
 .print-section {
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #ccc; 
   z-index: -1;
   position: absolute;
 }

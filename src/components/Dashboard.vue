@@ -50,7 +50,7 @@
               Student
             </router-link>
           </li>
-          <li v-if="role === 'admin' || role == 'instructor'">
+          <li v-if="role == 'instructor'">
             <router-link
               to="/dashboard/grading"
               :class="['block px-4 py-2 rounded', { 'bg-white text-black': isActive('/dashboard/grading'), 'text-gray-200 hover:bg-gray-700': !isActive('/dashboard/grading') }]"
