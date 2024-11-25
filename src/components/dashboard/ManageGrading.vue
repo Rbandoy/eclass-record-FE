@@ -13,13 +13,14 @@
       <button @click="openRenameModal" class="save-button ">Save Changes</button>
       <button @click="submitToAdmin" class="save-button">Submit Grades</button>
       <button @click="deleteFile" v-if="selectedFile?.id" class="save-button">Delete File</button>
+      <label class="custom-file-upload  save-button">
+        <input type="file" @change="onFileChange" />
+        Import File
+      </label>
+      <button @click="exportToExcel" class="export-button ">Export to Excel</button>
      </div>
     <!-- Custom File Import Button -->
-    <!-- <label class="custom-file-upload  save-button">
-      <input type="file" @change="onFileChange" />
-      Import File
-    </label> -->
-    <!-- <button @click="exportToExcel" class="export-button ">Export to Excel</button> -->
+    
     
   
     
@@ -398,21 +399,50 @@ export default defineComponent({
     };
 
     // Export to Excel
+    // const exportToExcel = () => {
+    //   const wb = XLSX.utils.book_new(); // Create a new workbook
+    //   const ws = XLSX.utils.aoa_to_sheet(data.value); // Convert data to a worksheet
+
+    //   const mergeCells = hotTableRef.value.hotInstance.getSettings().mergeCells || [];
+    //   if (mergeCells.length > 0) {
+    //     ws['!merges'] = mergeCells.map(merge => ({
+    //       s: { r: merge.row, c: merge.col },
+    //       e: { r: merge.row + merge.rowspan - 1, c: merge.col + merge.colspan - 1 },
+    //     }));
+    //   }
+
+    //   XLSX.utils.book_append_sheet(wb, ws, 'Sheet1'); // Append the worksheet to the workbook
+    //   XLSX.writeFile(wb, 'exported_data.xlsx'); // Export the workbook as an Excel file
+    // };
+
     const exportToExcel = () => {
-      const wb = XLSX.utils.book_new(); // Create a new workbook
-      const ws = XLSX.utils.aoa_to_sheet(data.value); // Convert data to a worksheet
+  const wb = XLSX.utils.book_new(); // Create a new workbook
 
-      const mergeCells = hotTableRef.value.hotInstance.getSettings().mergeCells || [];
-      if (mergeCells.length > 0) {
-        ws['!merges'] = mergeCells.map(merge => ({
-          s: { r: merge.row, c: merge.col },
-          e: { r: merge.row + merge.rowspan - 1, c: merge.col + merge.colspan - 1 },
-        }));
+  // Convert formulas to values
+  const dataClone = data.value.map(row =>
+    row.map(cell => {
+      if (typeof cell === 'string' && cell.startsWith('=')) {
+        // Handle formulas here if needed (e.g., calculate values manually)
+        return ''; // Replace with actual result if you can calculate it
       }
+      return cell; // Non-formula cells remain as is
+    })
+  );
 
-      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1'); // Append the worksheet to the workbook
-      XLSX.writeFile(wb, 'exported_data.xlsx'); // Export the workbook as an Excel file
-    };
+  const ws = XLSX.utils.aoa_to_sheet(dataClone); // Create the worksheet with calculated values
+
+  const mergeCells = hotTableRef.value.hotInstance.getSettings().mergeCells || [];
+  if (mergeCells.length > 0) {
+    ws['!merges'] = mergeCells.map(merge => ({
+      s: { r: merge.row, c: merge.col },
+      e: { r: merge.row + merge.rowspan - 1, c: merge.col + merge.colspan - 1 },
+    }));
+  }
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1'); // Append the worksheet to the workbook
+  XLSX.writeFile(wb, 'exported_data.xlsx'); // Export the workbook as an Excel file
+};
+
 
     // Save changes to Excel
    // Save changes to Excel
