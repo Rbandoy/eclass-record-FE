@@ -10,21 +10,15 @@
     <div ref="printSection"  class="print-section">
       <div class="flex items-center mb-4">
         <div class="flex w-full space-x-4 items-center justify-center gap-4">
-          <img src="@/assets/logo.jpg" alt="School Logo" class="h-20 w-20" />
+          
           <div class="flex self-center flex-col items-center justify-center">
+            <img src="@/assets/logo.jpg" alt="School Logo" class="h-20 w-20" />
             <h2 class="text-lg font-semibold text-gray-700">
               NORTH EASTERN MINDANAO STATE UNIVERSITY
             </h2>
             <h3 class="text-sm font-medium text-gray-500">
               Cantilan, Surigao del Sur
-            </h3>
-            <h3 class="text-sm font-medium text-gray-500">
-              Report of Grades
-            </h3>
-            <p class="text-xs text-gray-500">
-              SY: {{ selected_school_year }} Term:
-              {{ eval_sem }}
-            </p>
+            </h3> 
           </div>
         </div>
         <!-- <div class="text-right">
@@ -33,7 +27,16 @@
       </div>
 
       <!-- Student Information Section -->
-      <div class="border-t border-b py-4 mb-2">
+      <div class="border-t border-b py-4 mb-2 flex flex-col">
+        <div class="flex justify-center items-center flex-col">
+          <h3 class="text-sm font-medium text-gray-500">
+            Report of Grades
+          </h3>
+          <p class="text-xs text-gray-500">
+            SY: {{ selected_school_year }} Term:
+            {{ eval_sem }}
+          </p>
+        </div>
         <div class="grid grid-cols-2 gap-4 mt-[30px]">
           <div>
             <p class="text-sm font-medium text-gray-700">
